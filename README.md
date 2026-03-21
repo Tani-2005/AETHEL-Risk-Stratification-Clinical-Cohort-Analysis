@@ -52,6 +52,7 @@ streamlit run dashboard.py
 ```
 ---
 # Statistical Methodology
-
+```
 The core predictive model evaluates the hazard function $\lambda(t)$ for a respiratory event. It adjusts for baseline clinical covariates (age, smoking status, Townsend Deprivation Index), synthetic polygenic risk scores, and engineered longitudinal exposures to ambient PM2.5 and NO2. Non-linear feature interactions and explainability metrics (SHAP proxies) are derived via the randomForestSRC implementation.
+```
 ---
