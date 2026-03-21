@@ -15,7 +15,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("🧬 AETHEL: Pan-European Health Intelligence")
-st.markdown("**Interactive Spatio-Temporal Risk Stratification & Clinical Cohort Analysis**")
+st.markdown("**Interactive Risk Stratification & Clinical Cohort Analysis**")
 st.markdown("---")
 
 # 2. Data Loading (No more fake coordinates!)
