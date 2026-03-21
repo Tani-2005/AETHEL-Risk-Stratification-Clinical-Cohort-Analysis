@@ -52,6 +52,7 @@ cox_model <- coxph(
 
 print("Cox Proportional Hazards Coefficients:")
 print(summary(cox_model)$coefficients)
+```
 
 # Assumption Check
 ph_test <- cox.zph(cox_model)
@@ -75,6 +76,7 @@ vimp_data <- vimp(rsf_model)$importance
 sorted_vimp <- sort(vimp_data, decreasing = TRUE)
 print("Ranked Variable Importance (VIMP):")
 print(sorted_vimp)
+
 
 ## Conclusion
 The framework successfully bridges high-throughput spatio-temporal data engineering with rigorous, reproducible biostatistical modeling. By scaling the pipeline to 100 distinct geographic hubs, AETHEL provides a robust and scalable foundation for precision medicine and population health intelligence.
