@@ -51,6 +51,11 @@ Rscript r_analysis/survival_model.R
 streamlit run dashboard.py
 ```
 ---
+# Visuals 
+<img width="1906" height="1079" alt="image" src="https://github.com/user-attachments/assets/eea46092-b365-4a11-bd75-708f416cdcb6" />
+<img width="1901" height="883" alt="image" src="https://github.com/user-attachments/assets/ba42334d-9b8d-4784-8c50-0ed3fbc9248e" />
+
+---
 # Statistical Methodology
 
 The AETHEL pipeline models the respiratory hazard function $\lambda(t)$ by integrating clinical demographics, polygenic baseline risk, and longitudinal environmental telemetry. It advances beyond standard statistical inference by deploying Random Survival Forests to capture non-linear health interactions and generate high-fidelity, explainable patient risk profiles.
