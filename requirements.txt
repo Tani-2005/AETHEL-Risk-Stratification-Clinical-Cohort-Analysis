@@ -1,4 +1,7 @@
-pandas
-numpy
-streamlit
-plotly
+pandas>=2.0.0
+numpy>=1.24.0
+streamlit>=1.32.0
+plotly>=5.18.0
+pyyaml>=6.0.1
+scipy>=1.11.0
+pytest>=8.0.0

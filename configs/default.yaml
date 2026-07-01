@@ -1,0 +1,98 @@
+# =============================================================================
+# AETHEL — Default Configuration
+# Pan-European Biostatistical Risk & Population Health Engine
+# =============================================================================
+# This file is the single source of truth for all pipeline parameters.
+# All Python and R scripts read values from here — never hardcode inline.
+#
+# To run an experiment variant: copy this file, modify the relevant section,
+# and pass the path as an argument to scripts/run_pipeline.py.
+# =============================================================================
+
+project:
+  name: AETHEL
+  version: 2.0.0
+  description: "Pan-European Biostatistical Risk & Population Health Engine"
+
+# ---------------------------------------------------------------------------
+# Pipeline stage controls
+# Set any stage to false to skip it during a run_pipeline.py execution.
+# ---------------------------------------------------------------------------
+pipeline_controls:
+  generate_environment: true   # build_eu_registry.py + generate_env_data.py
+  generate_clinical: true      # generate_clinical_cohort.R
+  run_feature_engineering: true # preprocess_features.py
+  execute_survival_model: true  # survival_model.R
+
+# ---------------------------------------------------------------------------
+# Random seeds — the ONLY place seeds are defined for the entire project.
+# Python modules use seeds.python; R scripts use seeds.r.
+# ---------------------------------------------------------------------------
+seeds:
+  python: 42
+  r: 123
+
+# ---------------------------------------------------------------------------
+# Study-level parameters
+# ---------------------------------------------------------------------------
+study_parameters:
+  n_subjects: 1000
+  observation_years: 5
+  total_cities: 90
+  follow_up_months: 60          # derived: observation_years × 12
+
+# ---------------------------------------------------------------------------
+# Data paths  (relative to project root)
+# Source of truth — src/utils/paths.py mirrors these programmatically.
+# ---------------------------------------------------------------------------
+data_paths:
+  registry: "data/raw/eu_registry.csv"
+  raw_clinical: "data/raw/synthetic_clinical_cohort.csv"
+  raw_environmental: "data/raw/regional_environmental_history.csv"
+  processed_cohort: "data/processed/analytical_cohort.csv"
+
+# ---------------------------------------------------------------------------
+# Output paths (relative to project root)
+# ---------------------------------------------------------------------------
+output_paths:
+  models: "outputs/models"
+  figures: "outputs/figures"
+  metrics: "outputs/metrics"
+  predictions: "outputs/predictions"
+  shap: "outputs/shap"
+  calibration: "outputs/calibration"
+  logs: "outputs/logs"
+
+# ---------------------------------------------------------------------------
+# Model hyperparameters
+# ---------------------------------------------------------------------------
+model_params:
+  # Random Survival Forest
+  rsf_ntree: 500
+  rsf_importance: true
+
+# ---------------------------------------------------------------------------
+# Feature definitions
+# survival_covariates is the authoritative list of model inputs.
+# Any future extension (calibration, fairness, robustness) reads from here.
+# ---------------------------------------------------------------------------
+features:
+  survival_covariates:
+    - age
+    - is_smoker
+    - genomic_risk_score
+    - townsend_index
+    - avg_pm25_exposure
+    - avg_no2_exposure
+
+# ---------------------------------------------------------------------------
+# Dashboard defaults
+# ---------------------------------------------------------------------------
+default_dashboard_regions:
+  - UK
+  - DE  # Germany
+  - CH  # Switzerland
+  - SE  # Sweden
+  - FI  # Finland
+  - NO  # Norway
+  - DK  # Denmark
