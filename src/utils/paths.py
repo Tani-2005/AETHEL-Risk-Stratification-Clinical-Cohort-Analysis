@@ -76,6 +76,11 @@ class DataPaths:
     # --- Processed / analytical ---
     ANALYTICAL_COHORT: Path = DataDirs.PROCESSED / "analytical_cohort.csv"
 
+    # --- Train / val / test splits (unscaled, with engineered features) ---
+    TRAIN: Path = DataDirs.PROCESSED / "train.csv"
+    VAL: Path = DataDirs.PROCESSED / "val.csv"
+    TEST: Path = DataDirs.PROCESSED / "test.csv"
+
     # --- Future dataset placeholders ---
     FRAMINGHAM_RAW: Path = DataDirs.FRAMINGHAM / "framingham.csv"
     NHANES_RAW: Path = DataDirs.NHANES / "nhanes.csv"
@@ -95,6 +100,7 @@ class OutputDirs:
     SHAP: Path = Dirs.OUTPUTS / "shap"
     CALIBRATION: Path = Dirs.OUTPUTS / "calibration"
     LOGS: Path = Dirs.OUTPUTS / "logs"
+    REPORTS: Path = Dirs.OUTPUTS / "reports"
 
 
 # ---------------------------------------------------------------------------
@@ -104,9 +110,23 @@ class OutputDirs:
 class OutputPaths:
     """Canonical paths to specific output artefacts."""
 
+    # Model outputs
     VIMP_CSV: Path = OutputDirs.METRICS / "vimp.csv"
     COX_COEFFICIENTS_CSV: Path = OutputDirs.METRICS / "cox_coefficients.csv"
     RISK_DISTRIBUTION_CSV: Path = OutputDirs.METRICS / "risk_distribution.csv"
+
+    # Preprocessing artefacts
+    SCALER_JOBLIB: Path = OutputDirs.MODELS / "robust_scaler.joblib"
+    POLLUTION_INDEX_STATS: Path = OutputDirs.MODELS / "pollution_index_stats.csv"
+
+    # Data quality reports
+    DATA_QUALITY_REPORT: Path = OutputDirs.REPORTS / "data_quality_report.csv"
+    CLASS_BALANCE_REPORT: Path = OutputDirs.REPORTS / "class_balance_report.csv"
+    CORRELATION_REPORT: Path = OutputDirs.REPORTS / "correlation_report.csv"
+    VIF_REPORT: Path = OutputDirs.REPORTS / "vif_report.csv"
+    FEATURE_SUMMARY: Path = OutputDirs.REPORTS / "feature_summary.csv"
+    PREPROCESSING_SUMMARY: Path = OutputDirs.REPORTS / "preprocessing_summary.txt"
+    SPLIT_SUMMARY: Path = OutputDirs.REPORTS / "split_summary.csv"
 
 
 # ---------------------------------------------------------------------------

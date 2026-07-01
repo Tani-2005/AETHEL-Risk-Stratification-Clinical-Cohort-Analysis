@@ -54,6 +54,16 @@ class Columns:
     PM25: str = "pm2_5"
     NO2: str = "no2"
 
+    # --- Engineered features ---
+    BMI_CATEGORY: str = "bmi_category"
+    AGE_GROUP: str = "age_group"
+    POLLUTION_INDEX: str = "pollution_index"
+    LIFESTYLE_RISK: str = "lifestyle_risk"
+    HIGH_GENOMIC_RISK: str = "high_genomic_risk"
+
+    # --- Split membership ---
+    SPLIT: str = "split"  # values: train | val | test
+
     # --- Derived / dashboard ---
     CALCULATED_RISK_SCORE: str = "calculated_risk_score"
     RISK_CATEGORY: str = "Risk Category"
@@ -69,13 +79,55 @@ class Features:
     - Future: calibration, fairness, robustness modules
     """
 
+    # Survival model covariates — authoritative list.
+    # avg_no2_exposure removed: VIF = 15.25 with avg_pm25_exposure.
+    # Replaced by pollution_index (combined z-scored burden, fit on train only).
     SURVIVAL_COVARIATES: list[str] = [
         Columns.AGE,
         Columns.IS_SMOKER,
         Columns.GENOMIC_RISK_SCORE,
         Columns.TOWNSEND_INDEX,
         Columns.AVG_PM25_EXPOSURE,
+        Columns.POLLUTION_INDEX,
+        Columns.LIFESTYLE_RISK,
+        Columns.HIGH_GENOMIC_RISK,
+    ]
+
+    # Continuous features fed into the sklearn RobustScaler
+    CONTINUOUS_FEATURES: list[str] = [
+        Columns.AGE,
+        Columns.BMI,
+        Columns.GENOMIC_RISK_SCORE,
+        Columns.TOWNSEND_INDEX,
+        Columns.AVG_PM25_EXPOSURE,
         Columns.AVG_NO2_EXPOSURE,
+        Columns.LIFESTYLE_RISK,
+        Columns.POLLUTION_INDEX,
+    ]
+
+    # Binary indicator features — never scaled
+    BINARY_FEATURES: list[str] = [
+        Columns.IS_SMOKER,
+        Columns.HIGH_GENOMIC_RISK,
+    ]
+
+    # Categorical features — one-hot encoded in sklearn pipeline
+    CATEGORICAL_FEATURES: list[str] = [
+        Columns.BMI_CATEGORY,
+        Columns.AGE_GROUP,
+    ]
+
+    # Columns explicitly excluded from any model (identifiers, geospatial, outcomes)
+    NON_FEATURE_COLUMNS: list[str] = [
+        Columns.PATIENT_ID,
+        Columns.CITY_ID,
+        Columns.CITY,
+        Columns.COUNTRY,
+        Columns.LAT,
+        Columns.LON,
+        Columns.MONTHS_OBSERVED,
+        Columns.EVENT_OCCURRED,
+        Columns.SPLIT,
     ]
 
     # Variables to display in the dashboard telemetry table

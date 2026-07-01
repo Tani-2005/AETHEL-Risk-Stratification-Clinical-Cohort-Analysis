@@ -114,9 +114,15 @@ def stage_generate_clinical(cfg: AETHELConfig, skip_r: bool) -> None:
 
 
 def stage_preprocess_features(cfg: AETHELConfig) -> None:
-    """Stage 4: Engineer analytical cohort features."""
+    """Stage 4a: Join clinical + environmental data → analytical_cohort.csv."""
     from src.feature_engineering.preprocess_features import build_analytical_dataset
     build_analytical_dataset()
+
+
+def stage_full_preprocessing(cfg: AETHELConfig) -> None:
+    """Stage 4b: Validate → engineer → split → scale → select features."""
+    from src.feature_engineering.preprocess_features import run_full_preprocessing
+    run_full_preprocessing()
 
 
 def stage_survival_model(cfg: AETHELConfig, skip_r: bool) -> None:
@@ -160,24 +166,36 @@ def run_pipeline(config_path: Path | None = None, skip_r: bool = False) -> None:
     stages_run = 0
 
     if cfg.pipeline.generate_environment:
-        logger.info("[Stage 1/5] Building EU city registry...")
+        logger.info("[Stage 1/6] Building EU city registry...")
         stage_build_registry(cfg)
-        logger.info("[Stage 2/5] Generating environmental time-series...")
+        logger.info("[Stage 2/6] Generating environmental time-series...")
         stage_generate_env_data(cfg)
         stages_run += 2
 
     if cfg.pipeline.generate_clinical:
-        logger.info("[Stage 3/5] Generating clinical cohort (R)...")
+        logger.info("[Stage 3/6] Generating clinical cohort (R)...")
         stage_generate_clinical(cfg, skip_r)
         stages_run += 1
 
     if cfg.pipeline.run_feature_engineering:
-        logger.info("[Stage 4/5] Engineering analytical features...")
+        logger.info("[Stage 4a/6] Building analytical cohort (join clinical + env)...")
         stage_preprocess_features(cfg)
         stages_run += 1
 
+    # Stages 4b: validate, engineer, split, scale, select — Python only
+    if any([
+        cfg.pipeline.run_validation,
+        cfg.pipeline.run_feature_engineering_derived,
+        cfg.pipeline.run_splitting,
+        cfg.pipeline.run_preprocessing_pipeline,
+        cfg.pipeline.run_feature_selection,
+    ]):
+        logger.info("[Stage 4b/6] Full preprocessing pipeline (validate→engineer→split→scale→select)...")
+        stage_full_preprocessing(cfg)
+        stages_run += 1
+
     if cfg.pipeline.execute_survival_model:
-        logger.info("[Stage 5/5] Executing survival models (R)...")
+        logger.info("[Stage 5/6] Executing survival models on TRAIN split (R)...")
         stage_survival_model(cfg, skip_r)
         stages_run += 1
 
