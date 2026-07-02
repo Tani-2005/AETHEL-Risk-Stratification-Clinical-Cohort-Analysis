@@ -60,6 +60,11 @@ class DataDirs:
     NHANES: Path = Dirs.DATA / "nhanes"
     FRAMINGHAM: Path = Dirs.DATA / "framingham"
 
+    # Multi-cohort framework additions
+    HARMONIZED: Path = Dirs.DATA / "harmonized"
+    FEATURE_METADATA: Path = Dirs.DATA / "feature_metadata"
+    MAPPING_TABLES: Path = Dirs.DATA / "mapping_tables"
+
 
 # ---------------------------------------------------------------------------
 # Data file paths
@@ -81,9 +86,14 @@ class DataPaths:
     VAL: Path = DataDirs.PROCESSED / "val.csv"
     TEST: Path = DataDirs.PROCESSED / "test.csv"
 
-    # --- Future dataset placeholders ---
+    # --- Raw dataset files ---
     FRAMINGHAM_RAW: Path = DataDirs.FRAMINGHAM / "framingham.csv"
-    NHANES_RAW: Path = DataDirs.NHANES / "nhanes.csv"
+    NHANES_RAW: Path = DataDirs.FRAMINGHAM / "combined_data.csv"  # NHANES-derived
+
+    # --- Harmonized datasets (never overwrite raw) ---
+    SYNTHETIC_HARMONIZED: Path = DataDirs.HARMONIZED / "synthetic_harmonized.csv"
+    FRAMINGHAM_HARMONIZED: Path = DataDirs.HARMONIZED / "framingham_harmonized.csv"
+    NHANES_HARMONIZED: Path = DataDirs.HARMONIZED / "nhanes_harmonized.csv"
 
 
 # ---------------------------------------------------------------------------
@@ -101,6 +111,14 @@ class OutputDirs:
     CALIBRATION: Path = Dirs.OUTPUTS / "calibration"
     LOGS: Path = Dirs.OUTPUTS / "logs"
     REPORTS: Path = Dirs.OUTPUTS / "reports"
+    EXPERIMENTS: Path = Dirs.OUTPUTS / "experiments"
+
+
+class ExperimentDirs:
+    """Experiment-specific output directories."""
+
+    BASE: Path = Dirs.OUTPUTS / "experiments"
+    CONFIGS: Path = Dirs.CONFIGS / "experiments"
 
 
 # ---------------------------------------------------------------------------
@@ -119,7 +137,7 @@ class OutputPaths:
     SCALER_JOBLIB: Path = OutputDirs.MODELS / "robust_scaler.joblib"
     POLLUTION_INDEX_STATS: Path = OutputDirs.MODELS / "pollution_index_stats.csv"
 
-    # Data quality reports
+    # Data quality / preprocessing reports
     DATA_QUALITY_REPORT: Path = OutputDirs.REPORTS / "data_quality_report.csv"
     CLASS_BALANCE_REPORT: Path = OutputDirs.REPORTS / "class_balance_report.csv"
     CORRELATION_REPORT: Path = OutputDirs.REPORTS / "correlation_report.csv"
@@ -127,6 +145,14 @@ class OutputPaths:
     FEATURE_SUMMARY: Path = OutputDirs.REPORTS / "feature_summary.csv"
     PREPROCESSING_SUMMARY: Path = OutputDirs.REPORTS / "preprocessing_summary.txt"
     SPLIT_SUMMARY: Path = OutputDirs.REPORTS / "split_summary.csv"
+
+    # Multi-cohort framework reports
+    DATASET_AUDIT: Path = OutputDirs.REPORTS / "dataset_audit.csv"
+    FEATURE_AVAILABILITY_MATRIX: Path = OutputDirs.REPORTS / "feature_availability_matrix.csv"
+    HARMONIZATION_REPORT: Path = OutputDirs.REPORTS / "harmonization_report.csv"
+    COHORT_COMPARISON_REPORT: Path = OutputDirs.REPORTS / "cohort_comparison_report.csv"
+    DOMAIN_SHIFT_REPORT: Path = OutputDirs.REPORTS / "domain_shift_report.csv"
+    CROSS_COHORT_SUMMARY: Path = OutputDirs.REPORTS / "cross_cohort_summary.csv"
 
 
 # ---------------------------------------------------------------------------
@@ -137,19 +163,20 @@ class ConfigPaths:
     """Project configuration files."""
 
     DEFAULT_CONFIG: Path = Dirs.CONFIGS / "default.yaml"
+    EXPERIMENTS_DIR: Path = Dirs.CONFIGS / "experiments"
 
 
 # ---------------------------------------------------------------------------
-# Convenience: ensure output directories exist
+# Convenience: ensure all runtime directories exist
 # ---------------------------------------------------------------------------
 
 def ensure_output_dirs() -> None:
-    """
-    Create all output directories if they do not already exist.
-
-    Call this once at the start of any script that writes outputs.
-    """
-    for attr_name in vars(OutputDirs):
-        path = getattr(OutputDirs, attr_name)
-        if isinstance(path, Path):
-            path.mkdir(parents=True, exist_ok=True)
+    """Create all output and data directories if they do not already exist."""
+    for cls in (OutputDirs, ExperimentDirs):
+        for attr_name in vars(cls):
+            path = getattr(cls, attr_name)
+            if isinstance(path, Path):
+                path.mkdir(parents=True, exist_ok=True)
+    # Data versioning directories
+    for d in (DataDirs.HARMONIZED, DataDirs.FEATURE_METADATA, DataDirs.MAPPING_TABLES):
+        d.mkdir(parents=True, exist_ok=True)

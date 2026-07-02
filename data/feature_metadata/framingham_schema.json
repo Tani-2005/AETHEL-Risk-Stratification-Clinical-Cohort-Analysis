@@ -1,0 +1,27 @@
+{
+  "dataset": "framingham",
+  "common_available": [
+    "h_age",
+    "h_bmi",
+    "h_is_smoker",
+    "h_sex_male",
+    "h_sys_bp",
+    "h_dia_bp",
+    "h_total_cholesterol",
+    "h_glucose",
+    "h_outcome_binary"
+  ],
+  "missing_from_common": [
+    "h_ldl",
+    "h_triglycerides"
+  ],
+  "dataset_specific": [
+    "cigsPerDay",
+    "BPMeds",
+    "prevalentStroke",
+    "prevalentHyp",
+    "diabetes",
+    "heartRate",
+    "education"
+  ]
+}

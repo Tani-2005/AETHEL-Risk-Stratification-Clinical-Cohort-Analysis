@@ -1,0 +1,10 @@
+dataset,raw_column,harmonized_column,unit,recoding,notes
+framingham,age,h_age,years,none,Direct rename
+framingham,BMI,h_bmi,kg/m²,none,Direct rename (uppercase BMI)
+framingham,currentSmoker,h_is_smoker,binary 0/1,none,Direct rename. Note: cigsPerDay retained as dataset-specific.
+framingham,male,h_sex_male,binary 0/1,none,"0=Female, 1=Male"
+framingham,sysBP,h_sys_bp,mmHg,none,Direct rename
+framingham,diaBP,h_dia_bp,mmHg,none,Direct rename
+framingham,totChol,h_total_cholesterol,mg/dL,none,Direct rename. 1.2% missing (MCAR).
+framingham,glucose,h_glucose,mg/dL,none,9.2% missing (MAR-likely). Imputed downstream with train median.
+framingham,TenYearCHD,h_outcome_binary,binary 0/1,none,10-year CHD risk. Structurally binary but endpoint differs from Synthetic.

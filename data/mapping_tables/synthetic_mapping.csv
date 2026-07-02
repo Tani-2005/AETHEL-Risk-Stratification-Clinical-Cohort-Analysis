@@ -1,0 +1,5 @@
+dataset,raw_column,harmonized_column,unit,recoding,notes
+synthetic,age,h_age,years,none,Direct rename
+synthetic,bmi,h_bmi,kg/m²,none,Direct rename
+synthetic,is_smoker,h_is_smoker,binary 0/1,none,Direct rename
+synthetic,event_occurred,h_outcome_binary,binary 0/1,none,Respiratory event. Clinically distinct from TenYearCHD.

@@ -1,0 +1,32 @@
+name: exp_mode4_synthetic_to_framingham
+mode: 4
+description: >
+  Cross-cohort generalization study.
+  Train on AETHEL Synthetic (European respiratory cohort).
+  Validate on Framingham Heart Study (US cardiovascular cohort).
+  Feature set: intersection of both supervised datasets = [h_age, h_bmi, h_is_smoker].
+  This is the key external validation experiment.
+
+  IMPORTANT LIMITATIONS:
+  - Intersection feature set is narrow (3 features) due to data heterogeneity.
+  - Outcome endpoints differ: respiratory event vs 10-year CHD risk.
+    Structural binary equivalence assumed; clinical endpoint difference documented.
+  - Population shift: European synthetic vs US Framingham community.
+  - Age distributions differ: Synthetic 40-85, Framingham 32-70.
+  - Event rates differ: Synthetic 23.4%, Framingham 15.2%.
+
+train_datasets: [synthetic]
+val_datasets: [framingham]
+test_datasets: []
+feature_set: intersection
+outcome: h_outcome_binary
+seed: 42
+train_split: 1.0
+supervised_only: true
+domain_shift_only: false
+notes:
+  - CROSS-COHORT EXPERIMENT — generalization claim requires careful interpretation.
+  - Feature set resolved at runtime as intersection of common available features.
+  - Endpoint heterogeneity documented above.
+  - Domain shift analysis automatically generated alongside this experiment.
+  - Expected intersection = h_age, h_bmi, h_is_smoker.

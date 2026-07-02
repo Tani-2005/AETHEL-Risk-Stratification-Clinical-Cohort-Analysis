@@ -1,0 +1,98 @@
+{
+  "description": "Common harmonized feature space for AETHEL multi-cohort framework",
+  "version": "3.0.0",
+  "h_prefix_convention": "All harmonized features use the 'h_' prefix",
+  "features": {
+    "h_age": {
+      "type": "continuous",
+      "unit": "years",
+      "source": [
+        "synthetic",
+        "framingham"
+      ]
+    },
+    "h_bmi": {
+      "type": "continuous",
+      "unit": "kg/m\u00b2",
+      "source": [
+        "synthetic",
+        "framingham"
+      ]
+    },
+    "h_is_smoker": {
+      "type": "binary",
+      "unit": "0/1",
+      "source": [
+        "synthetic",
+        "framingham"
+      ]
+    },
+    "h_sex_male": {
+      "type": "binary",
+      "unit": "0=Female,1=Male",
+      "source": [
+        "framingham"
+      ]
+    },
+    "h_sys_bp": {
+      "type": "continuous",
+      "unit": "mmHg",
+      "source": [
+        "framingham",
+        "nhanes"
+      ]
+    },
+    "h_dia_bp": {
+      "type": "continuous",
+      "unit": "mmHg",
+      "source": [
+        "framingham",
+        "nhanes"
+      ]
+    },
+    "h_total_cholesterol": {
+      "type": "continuous",
+      "unit": "mg/dL",
+      "source": [
+        "framingham",
+        "nhanes"
+      ]
+    },
+    "h_ldl": {
+      "type": "continuous",
+      "unit": "mg/dL",
+      "source": [
+        "nhanes"
+      ]
+    },
+    "h_triglycerides": {
+      "type": "continuous",
+      "unit": "mg/dL",
+      "source": [
+        "nhanes"
+      ]
+    },
+    "h_glucose": {
+      "type": "continuous",
+      "unit": "mg/dL",
+      "source": [
+        "framingham"
+      ]
+    },
+    "h_outcome_binary": {
+      "type": "binary",
+      "unit": "0/1",
+      "source": [
+        "synthetic",
+        "framingham"
+      ],
+      "note": "Different clinical endpoints per dataset"
+    }
+  },
+  "supervised_intersection": [
+    "h_age",
+    "h_bmi",
+    "h_is_smoker"
+  ],
+  "cross_cohort_note": "For cross-cohort supervised experiments (Synthetic\u2192Framingham), only supervised_intersection features are guaranteed available in both datasets."
+}

@@ -1,0 +1,20 @@
+name: exp_mode2_framingham
+mode: 2
+description: >
+  Within-cohort experiment. Train and evaluate on the Framingham Heart Study.
+  Stratified 70/15/15 split. All Framingham-available harmonized features used.
+  Glucose (9.2% missing) imputed with training-fold median.
+train_datasets: [framingham]
+val_datasets: []
+test_datasets: []
+feature_set: intersection
+outcome: h_outcome_binary
+seed: 42
+train_split: 0.70
+supervised_only: true
+domain_shift_only: false
+notes:
+  - Within-cohort baseline. No generalization claim.
+  - TenYearCHD (cardiovascular) maps to h_outcome_binary.
+  - Glucose imputed with train-fold median (9.2% missing, MAR-likely).
+  - LDL and triglycerides absent from this Framingham release.

@@ -1,0 +1,18 @@
+name: exp_mode1_synthetic
+mode: 1
+description: >
+  Within-cohort experiment. Train and evaluate on the AETHEL Synthetic cohort.
+  Stratified 70/15/15 split. All synthetic-available harmonized features used.
+train_datasets: [synthetic]
+val_datasets: []
+test_datasets: []
+feature_set: intersection
+outcome: h_outcome_binary
+seed: 42
+train_split: 0.70
+supervised_only: true
+domain_shift_only: false
+notes:
+  - Within-cohort baseline. No generalization claim.
+  - event_occurred (respiratory) maps to h_outcome_binary.
+  - Synthetic data — no real patients.

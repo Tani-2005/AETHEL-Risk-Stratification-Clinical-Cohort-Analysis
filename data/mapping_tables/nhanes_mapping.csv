@@ -1,0 +1,6 @@
+dataset,raw_column,harmonized_column,unit,recoding,notes
+nhanes,st,h_sys_bp,mmHg,zero→NaN,NHANES BPXSY equivalent. Zero values replaced with NaN.
+nhanes,dt,h_dia_bp,mmHg,zero→NaN,NHANES BPXDI equivalent. Zero values replaced with NaN.
+nhanes,tc,h_total_cholesterol,mg/dL,zero→NaN,Total cholesterol. Zero values replaced with NaN.
+nhanes,lbdldl,h_ldl,mg/dL,zero→NaN,LDL cholesterol (Friedewald equation in NHANES).
+nhanes,lbxtr,h_triglycerides,mg/dL,zero→NaN,Serum triglycerides.

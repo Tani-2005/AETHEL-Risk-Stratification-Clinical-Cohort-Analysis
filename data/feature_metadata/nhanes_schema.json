@@ -1,0 +1,26 @@
+{
+  "dataset": "nhanes",
+  "common_available": [
+    "h_sys_bp",
+    "h_dia_bp",
+    "h_total_cholesterol",
+    "h_ldl",
+    "h_triglycerides"
+  ],
+  "missing_from_common": [
+    "h_age",
+    "h_bmi",
+    "h_is_smoker",
+    "h_sex_male",
+    "h_glucose",
+    "h_outcome_binary"
+  ],
+  "dataset_specific": [
+    "Column1",
+    "lbxin",
+    "lbdinsi",
+    "luxsmed",
+    "luxcapm",
+    "tcs"
+  ]
+}

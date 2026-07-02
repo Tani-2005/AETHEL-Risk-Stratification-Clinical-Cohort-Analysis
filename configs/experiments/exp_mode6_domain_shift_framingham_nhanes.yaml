@@ -1,0 +1,20 @@
+name: exp_mode6_domain_shift_framingham_nhanes
+mode: 6
+description: >
+  Domain shift analysis between Framingham and NHANES.
+  Shared features: h_sys_bp, h_dia_bp, h_total_cholesterol.
+  Framingham is supervised; NHANES is not.
+  KS test quantifies distributional shift in cardiovascular markers.
+train_datasets: []
+val_datasets: []
+test_datasets: []
+feature_set: union
+outcome: h_outcome_binary
+seed: 42
+supervised_only: false
+domain_shift_only: true
+notes:
+  - DOMAIN SHIFT ONLY — no model training.
+  - Shared harmonized features: h_sys_bp, h_dia_bp, h_total_cholesterol.
+  - NHANES additionally has h_ldl and h_triglycerides (absent in Framingham).
+  - KS statistics generated for all shared features.

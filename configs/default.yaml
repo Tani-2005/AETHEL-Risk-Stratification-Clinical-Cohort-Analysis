@@ -8,6 +8,63 @@ project:
   version: 3.0.0
   description: "Pan-European Biostatistical Risk & Population Health Engine"
 
+# ---------------------------------------------------------------------------
+# Dataset registry — all cohort sources managed here.
+# Never hardcode dataset names anywhere else; reference DatasetNames constants.
+# ---------------------------------------------------------------------------
+datasets:
+  synthetic:
+    name: "AETHEL Synthetic Cohort"
+    path: "data/processed/analytical_cohort.csv"
+    outcome_col: "event_occurred"
+    outcome_type: "binary"       # binary | survival | none
+    supervised: true
+    description: "Pan-European synthetic respiratory disease cohort (1,000 patients)"
+    population: "European (simulated)"
+    domain: "Respiratory"
+    enabled: true
+
+  framingham:
+    name: "Framingham Heart Study"
+    path: "data/framingham/framingham.csv"
+    outcome_col: "TenYearCHD"
+    outcome_type: "binary"
+    supervised: true
+    description: "US cardiovascular community cohort — 10-year CHD risk"
+    population: "US community (Framingham, MA)"
+    domain: "Cardiovascular"
+    enabled: true
+    harmonized_outcome_note: >
+      TenYearCHD is a 10-year binary CHD risk indicator. Cross-cohort
+      comparison with Synthetic (respiratory) requires acknowledging
+      different clinical endpoints. Structural equivalence as binary
+      outcomes is assumed; endpoint difference is documented.
+
+  nhanes:
+    name: "NHANES Biochemical Survey"
+    path: "data/framingham/combined_data.csv"
+    outcome_col: null
+    outcome_type: "none"
+    supervised: false
+    description: "US national health survey — biochemical markers only (no outcome)"
+    population: "US general population"
+    domain: "Cardiovascular/Metabolic"
+    enabled: true
+    limitations: >
+      No age, BMI, smoking, sex, or outcome variable present.
+      Suitable for domain shift / covariate distribution analysis only.
+      Cannot support supervised training or evaluation.
+
+# ---------------------------------------------------------------------------
+# Harmonization settings
+# ---------------------------------------------------------------------------
+harmonization:
+  imputation_strategy: "median"     # for continuous missing values
+  binary_imputation: "mode"         # for binary missing values
+  min_common_features: 2            # minimum features for cross-cohort experiment
+  intersection_datasets: ["synthetic", "framingham"]  # supervised intersection
+
+
 pipeline_controls:
   generate_environment: true
   generate_clinical: true

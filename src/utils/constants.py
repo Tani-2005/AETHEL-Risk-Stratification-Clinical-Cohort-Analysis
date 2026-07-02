@@ -178,3 +178,91 @@ class EnvPollutants:
         "Age": 0.12,
         "Deprivation": 0.05,
     }
+
+
+# ---------------------------------------------------------------------------
+# Multi-cohort harmonized feature space
+# ---------------------------------------------------------------------------
+
+class HarmonizedColumns:
+    """
+    The common harmonized feature space shared across all AETHEL cohorts.
+
+    All harmonized columns use the ``h_`` prefix to distinguish them from
+    raw dataset-specific columns.  Raw columns are NEVER overwritten —
+    harmonized datasets are written to ``data/harmonized/``.
+
+    Availability per dataset
+    ------------------------
+    h_age             : Synthetic ✓  Framingham ✓  NHANES ✗
+    h_bmi             : Synthetic ✓  Framingham ✓  NHANES ✗
+    h_is_smoker       : Synthetic ✓  Framingham ✓  NHANES ✗
+    h_sex_male        : Synthetic ✗  Framingham ✓  NHANES ✗
+    h_sys_bp          : Synthetic ✗  Framingham ✓  NHANES ✓
+    h_dia_bp          : Synthetic ✗  Framingham ✓  NHANES ✓
+    h_total_cholesterol: Synthetic ✗  Framingham ✓  NHANES ✓
+    h_ldl             : Synthetic ✗  Framingham ✗  NHANES ✓
+    h_triglycerides   : Synthetic ✗  Framingham ✗  NHANES ✓
+    h_glucose         : Synthetic ✗  Framingham ✓  NHANES ✗
+    h_outcome_binary  : Synthetic ✓  Framingham ✓  NHANES ✗
+
+    Cross-cohort intersection (Synthetic ∩ Framingham, supervised):
+        h_age, h_bmi, h_is_smoker
+    """
+
+    # --- Core clinical features ---
+    AGE: str = "h_age"
+    BMI: str = "h_bmi"
+    IS_SMOKER: str = "h_is_smoker"
+    SEX_MALE: str = "h_sex_male"
+
+    # --- Cardiovascular markers ---
+    SYS_BP: str = "h_sys_bp"
+    DIA_BP: str = "h_dia_bp"
+    TOTAL_CHOLESTEROL: str = "h_total_cholesterol"
+    LDL: str = "h_ldl"
+    TRIGLYCERIDES: str = "h_triglycerides"
+    GLUCOSE: str = "h_glucose"
+
+    # --- Harmonized outcome ---
+    OUTCOME_BINARY: str = "h_outcome_binary"
+
+    # --- Complete common space (excluding outcome) ---
+    ALL_FEATURES: list[str] = [
+        AGE, BMI, IS_SMOKER, SEX_MALE,
+        SYS_BP, DIA_BP, TOTAL_CHOLESTEROL, LDL, TRIGLYCERIDES, GLUCOSE,
+    ]
+
+    # --- Intersection: available in BOTH supervised datasets (Synthetic + Framingham) ---
+    SUPERVISED_INTERSECTION: list[str] = [AGE, BMI, IS_SMOKER]
+
+    # --- Continuous harmonized features (for scaling/analysis) ---
+    CONTINUOUS: list[str] = [
+        AGE, BMI, SYS_BP, DIA_BP, TOTAL_CHOLESTEROL, LDL, TRIGLYCERIDES, GLUCOSE,
+    ]
+
+    # --- Binary harmonized features ---
+    BINARY: list[str] = [IS_SMOKER, SEX_MALE]
+
+
+class DatasetNames:
+    """Canonical dataset identifiers used throughout the config and registry."""
+
+    SYNTHETIC: str = "synthetic"
+    FRAMINGHAM: str = "framingham"
+    NHANES: str = "nhanes"
+
+    ALL: list[str] = [SYNTHETIC, FRAMINGHAM, NHANES]
+    SUPERVISED: list[str] = [SYNTHETIC, FRAMINGHAM]  # have outcome labels
+
+
+class ExperimentModes:
+    """Experiment mode definitions (config-driven)."""
+
+    WITHIN_SYNTHETIC: int = 1      # train+test: synthetic
+    WITHIN_FRAMINGHAM: int = 2     # train+test: framingham
+    WITHIN_NHANES: int = 3         # unsupported (no labels)
+    SYNTHETIC_TO_FRAMINGHAM: int = 4  # train: synthetic, validate: framingham
+    SYNTHETIC_TO_NHANES: int = 5      # domain shift only
+    FRAMINGHAM_TO_NHANES: int = 6     # domain shift only
+    COMBINED: int = 7              # train: synthetic+framingham, validate: held-out

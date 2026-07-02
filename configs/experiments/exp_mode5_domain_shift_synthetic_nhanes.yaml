@@ -1,0 +1,21 @@
+name: exp_mode5_domain_shift_synthetic_nhanes
+mode: 5
+description: >
+  Domain shift analysis only.
+  Compares feature distributions between AETHEL Synthetic and NHANES.
+  No supervised training — NHANES has no outcome variable.
+  Overlapping features: h_sys_bp, h_dia_bp, h_total_cholesterol
+  (available in NHANES; absent from Synthetic — distribution comparison is one-sided).
+train_datasets: []
+val_datasets: []
+test_datasets: []
+feature_set: union
+outcome: h_outcome_binary
+seed: 42
+supervised_only: false
+domain_shift_only: true
+notes:
+  - DOMAIN SHIFT ONLY — no model training or evaluation.
+  - NHANES lacks age, BMI, smoking, and outcome variable.
+  - Shared features between Synthetic and NHANES: none in common space.
+  - This experiment quantifies the covariate shift in biochemical markers.

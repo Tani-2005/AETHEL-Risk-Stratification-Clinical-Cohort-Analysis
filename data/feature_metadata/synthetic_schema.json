@@ -1,0 +1,30 @@
+{
+  "dataset": "synthetic",
+  "common_available": [
+    "h_age",
+    "h_bmi",
+    "h_is_smoker",
+    "h_outcome_binary"
+  ],
+  "missing_from_common": [
+    "h_sex_male",
+    "h_sys_bp",
+    "h_dia_bp",
+    "h_total_cholesterol",
+    "h_ldl",
+    "h_triglycerides",
+    "h_glucose"
+  ],
+  "dataset_specific": [
+    "patient_id",
+    "genomic_risk_score",
+    "townsend_index",
+    "avg_pm25_exposure",
+    "avg_no2_exposure",
+    "months_observed",
+    "city",
+    "city_id",
+    "lat",
+    "lon"
+  ]
+}

@@ -1,0 +1,22 @@
+name: exp_mode7_combined
+mode: 7
+description: >
+  Combined cohort training.
+  Train on merged Synthetic + Framingham using intersection features.
+  Validate on held-out portion of each dataset (auto-split internally).
+  Intersection = h_age, h_bmi, h_is_smoker.
+train_datasets: [synthetic, framingham]
+val_datasets: [synthetic, framingham]
+test_datasets: []
+feature_set: intersection
+outcome: h_outcome_binary
+seed: 42
+train_split: 0.70
+supervised_only: true
+domain_shift_only: false
+notes:
+  - COMBINED COHORT — merges two different clinical populations.
+  - Feature set = intersection of Synthetic and Framingham = h_age, h_bmi, h_is_smoker.
+  - Outcome heterogeneity: respiratory event (Synthetic) vs 10-year CHD (Framingham).
+  - Source dataset column (_source_dataset) retained for stratification analysis.
+  - This experiment tests whether pooling improves robustness vs within-cohort.
