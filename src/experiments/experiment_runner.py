@@ -103,7 +103,8 @@ class ExperimentRunner:
     def _merge_datasets(self, datasets: list[CohortDataset], feature_cols: list[str], outcome_col: str) -> pd.DataFrame:
         frames = []
         for ds in datasets:
-            cols = [c for c in feature_cols + [outcome_col] if c in ds.df_harmonized.columns]
+            extra_cols = [c for c in ["months_observed", "event_occurred"] if c in ds.df_harmonized.columns]
+            cols = [c for c in feature_cols + [outcome_col] + extra_cols if c in ds.df_harmonized.columns]
             sub = ds.df_harmonized[cols].copy()
             sub["_source_dataset"] = ds.name
             frames.append(sub)

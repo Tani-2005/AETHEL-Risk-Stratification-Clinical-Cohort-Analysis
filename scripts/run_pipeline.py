@@ -190,7 +190,7 @@ def run_pipeline(config_path: Path | None = None, skip_r: bool = False) -> None:
         cfg.pipeline.run_preprocessing_pipeline,
         cfg.pipeline.run_feature_selection,
     ]):
-        logger.info("[Stage 4b/6] Full preprocessing pipeline (validate→engineer→split→scale→select)...")
+        logger.info("[Stage 4b/6] Full preprocessing pipeline (validate->engineer->split->scale->select)...")
         stage_full_preprocessing(cfg)
         stages_run += 1
 

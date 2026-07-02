@@ -102,7 +102,7 @@ class CohortSplitter:
         stratify = df[self._stratify_col] if self._stratify_col in df.columns else None
 
         logger.info(
-            "Splitting cohort (%d patients) → train %.0f%% / val %.0f%% / test %.0f%%",
+            "Splitting cohort (%d patients) -> train %.0f%% / val %.0f%% / test %.0f%%",
             len(df),
             self._train_size * 100,
             self._val_size * 100,
@@ -168,7 +168,7 @@ class CohortSplitter:
         val.to_csv(DataPaths.VAL, index=False)
         test.to_csv(DataPaths.TEST, index=False)
         logger.info(
-            "Splits saved → train: %s | val: %s | test: %s",
+            "Splits saved -> train: %s | val: %s | test: %s",
             DataPaths.TRAIN, DataPaths.VAL, DataPaths.TEST,
         )
 

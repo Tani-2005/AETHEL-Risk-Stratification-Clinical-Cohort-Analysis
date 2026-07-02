@@ -132,6 +132,8 @@ class AETHELConfig:
     feature_eng: FeatureEngineeringConfig = field(default_factory=FeatureEngineeringConfig)
     feature_sel: FeatureSelectionConfig = field(default_factory=FeatureSelectionConfig)
     dashboard_regions: list[str] = field(default_factory=list)
+    datasets: dict[str, Any] = field(default_factory=dict)
+    harmonization: dict[str, Any] = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -166,6 +168,8 @@ def _parse(raw: dict[str, Any]) -> AETHELConfig:
     val_raw = raw.get("validation", {})
     feng_raw = raw.get("feature_engineering", {})
     fsel_raw = raw.get("feature_selection", {})
+    datasets_raw = raw.get("datasets", {})
+    harmonization_raw = raw.get("harmonization", {})
 
     return AETHELConfig(
         project=ProjectConfig(
@@ -225,4 +229,7 @@ def _parse(raw: dict[str, Any]) -> AETHELConfig:
             mi_top_k=fsel_raw.get("mi_top_k", 10),
         ),
         dashboard_regions=raw.get("default_dashboard_regions", []),
+        datasets=datasets_raw,
+        harmonization=harmonization_raw,
     )
+
