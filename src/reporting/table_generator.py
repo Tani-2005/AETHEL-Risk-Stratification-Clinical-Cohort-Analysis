@@ -475,14 +475,7 @@ def build_table_10_trustworthiness() -> pd.DataFrame:
         "Robustness Grade": ["B", "D", "A", "A", "A"],
         "Generalization Grade": ["C", "F", "C", "B", "B"],
         "Consistency Grade": ["B", "C", "B", "B", "B"],
-        "Reproducibility Grade": ["A", "B", "A", "A", "A"],
-        "Trustworthiness Index (0 - 100)": [
-            "81.2",
-            "58.4",
-            "85.6",
-            "90.5",
-            "89.2"
-        ]
+        "Reproducibility Grade": ["A", "B", "A", "A", "A"]
     }
     return pd.DataFrame(data)
 

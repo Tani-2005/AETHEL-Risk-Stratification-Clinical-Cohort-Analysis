@@ -358,7 +358,7 @@ def build_pdf_publication_report(
         
         {"type": "h2", "text": "8. Trustworthiness Grading Summary"},
         {"type": "p", "text": "The final grading index rates models across seven key areas of trustworthiness and clinical reliability."},
-        {"type": "table", "data": build_table_10_trustworthiness(), "col_widths": [110, 50, 50, 50, 50, 50, 50, 50, 90]},
+        {"type": "table", "data": build_table_10_trustworthiness(), "col_widths": [110, 55, 55, 55, 55, 55, 55, 55]},
         {"type": "image", "path": output_dir / "figures" / "workflow_trustworthiness_framework.png"}
     ]
     
