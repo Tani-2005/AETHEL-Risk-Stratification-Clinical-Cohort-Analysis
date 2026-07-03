@@ -1,0 +1,11 @@
+datasets:
+  framingham:
+    name: "Framingham Heart Study"
+    path: "data/framingham/framingham.csv"
+    outcome_col: "TenYearCHD"
+    outcome_type: "binary"
+    supervised: true
+    description: "US cardiovascular community cohort — 10-year CHD risk"
+    population: "US community (Framingham, MA)"
+    domain: "Cardiovascular"
+    enabled: true

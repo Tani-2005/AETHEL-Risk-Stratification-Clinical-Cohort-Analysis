@@ -1,0 +1,11 @@
+datasets:
+  synthetic:
+    name: "AETHEL Synthetic Cohort"
+    path: "data/processed/analytical_cohort.csv"
+    outcome_col: "event_occurred"
+    outcome_type: "binary"
+    supervised: true
+    description: "Pan-European synthetic respiratory disease cohort (1,000 patients)"
+    population: "European (simulated)"
+    domain: "Respiratory"
+    enabled: true

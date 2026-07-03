@@ -1,0 +1,26 @@
+models:
+  logistic_regression:
+    max_iter: 1000
+    random_state: 42
+    C: 1.0
+    penalty: "l2"
+  decision_tree:
+    max_depth: 5
+    random_state: 42
+    criterion: "gini"
+  random_forest:
+    n_estimators: 100
+    random_state: 42
+    max_depth: null
+  xgboost:
+    eval_metric: "logloss"
+    random_state: 42
+    n_estimators: 100
+    max_depth: 3
+    learning_rate: 0.1
+  lightgbm:
+    verbose: -1
+    random_state: 42
+    n_estimators: 100
+    max_depth: -1
+    learning_rate: 0.1

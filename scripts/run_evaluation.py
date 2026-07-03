@@ -370,6 +370,11 @@ def evaluate_experiment(exp_cfg: ExperimentConfig, runner: ExperimentRunner) -> 
 
 
 def main() -> None:
+    import argparse
+    parser = argparse.ArgumentParser(description="Model Evaluation Orchestrator")
+    parser.add_argument("--experiment", type=str, default=None, help="Name of the experiment to run")
+    args = parser.parse_args()
+
     configure_logging()
     ensure_output_dirs()
     
@@ -378,24 +383,36 @@ def main() -> None:
     
     # Load all experiment configurations
     exp_configs_dir = PROJECT_ROOT / "configs" / "experiments"
-    yaml_files = sorted(exp_configs_dir.glob("*.yaml"))
+    
+    if args.experiment:
+        # Check if experiment file exists
+        exp_file = exp_configs_dir / f"{args.experiment}.yaml"
+        if not exp_file.exists():
+            # Fallback to direct path or checking file name
+            exp_file = Path(args.experiment)
+        if exp_file.exists():
+            yaml_files = [exp_file]
+        else:
+            logger.error("Experiment config file not found: %s", args.experiment)
+            return
+    else:
+        yaml_files = sorted(exp_configs_dir.glob("*.yaml"))
     
     if not yaml_files:
         logger.error("No YAML experiment configurations found in %s", exp_configs_dir)
         return
         
     for yf in yaml_files:
-        # Skip domain shift experiments
-        if "domain_shift" in yf.name.lower():
+        # Skip domain shift experiments unless explicitly requested
+        if not args.experiment and "domain_shift" in yf.name.lower():
             logger.info("Skipping domain-shift-only experiment: %s", yf.name)
             continue
 
-        # NHANES-only experiments lack target outcomes, skip evaluation
-        if "nhanes" in yf.name.lower() and not ("synthetic" in yf.name.lower() or "framingham" in yf.name.lower()):
+        # NHANES-only experiments lack target outcomes, skip evaluation unless explicitly requested
+        if not args.experiment and "nhanes" in yf.name.lower() and not ("synthetic" in yf.name.lower() or "framingham" in yf.name.lower()):
             logger.info("Skipping NHANES-only experiment (unsupervised domain-shift): %s", yf.name)
             continue
 
-            
         try:
             exp_cfg = ExperimentConfig.from_yaml(yf)
             evaluate_experiment(exp_cfg, runner)
@@ -403,7 +420,7 @@ def main() -> None:
             logger.exception("Failed to run evaluation for %s: %s", yf.name, str(e))
             
     logger.info("=" * 70)
-    logger.info("All experiments evaluated successfully. Reports saved to outputs/evaluation/.")
+    logger.info("Evaluation complete. Reports saved to outputs/evaluation/.")
     logger.info("=" * 70)
 
 
