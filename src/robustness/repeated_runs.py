@@ -74,18 +74,23 @@ def run_repeated_experiments(
             bg_size = min(100, len(X_train))
             X_bg = X_train[features].iloc[:bg_size]
             
+            # Limit X_val size for SHAP speed
+            val_explain_size = min(500, len(X_val))
+            # Determine indices deterministically using seed for consistency
+            X_val_sub = X_val[features].sample(n=val_explain_size, random_state=seed)
+            
             # Defensive check for explainer
             model_name = model_class.__name__.lower()
             if "logistic" in model_name:
                 explainer = shap.LinearExplainer(model, X_bg)
-                shap_vals = explainer.shap_values(X_val[features])
+                shap_vals = explainer.shap_values(X_val_sub)
             elif "forest" in model_name or "tree" in model_name or "xgb" in model_name or "lgb" in model_name:
                 explainer = shap.TreeExplainer(model, X_bg)
                 # Avoid additivity error on Windows
-                shap_vals = explainer.shap_values(X_val[features], check_additivity=False)
+                shap_vals = explainer.shap_values(X_val_sub, check_additivity=False)
             else:
                 explainer = shap.Explainer(model, X_bg)
-                shap_vals = explainer(X_val[features]).values
+                shap_vals = explainer(X_val_sub).values
             
             # Handle multi-class output shapes from SHAP
             if isinstance(shap_vals, list):
@@ -97,7 +102,7 @@ def run_repeated_experiments(
         except Exception as e:
             logger.warning("    SHAP calculation failed for seed %d: %s", seed, e)
             # Fallback to zero SHAP values
-            all_shap_values.append(np.zeros((len(X_val), len(features))))
+            all_shap_values.append(np.zeros((val_explain_size if 'val_explain_size' in locals() else len(X_val), len(features))))
 
     # Compute summary statistics for metrics
     metric_keys = list(all_metrics[0].keys())
