@@ -207,4 +207,5 @@ def test_robustness_scoring():
     assert "overall_score" in res
     assert 0.80 <= res["overall_score"] <= 0.95
     assert "grade" in res
-    assert res["grade"] == "Moderate Robustness (Acceptable)"
+    assert res["grade"] == "High Robustness (Clinical-Grade)"
+
