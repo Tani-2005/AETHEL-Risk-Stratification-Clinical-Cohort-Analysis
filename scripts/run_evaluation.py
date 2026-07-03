@@ -203,15 +203,19 @@ def evaluate_experiment(exp_cfg: ExperimentConfig, runner: ExperimentRunner) -> 
     logger.info("Computing metrics and bootstrap CIs on Validation split...")
     boot_eval = BootstrapEvaluator(n_bootstrap=1000, seed=exp_cfg.seed)
     
+    time_c = val_df["months_observed"].values if "months_observed" in val_df.columns else None
+    event_c = val_df["event_occurred"].values if "event_occurred" in val_df.columns else None
+    
     val_results = []
     for model_name, preds in val_predictions.items():
         probs = preds["prob"]
+        is_surv = "cox" in model_name.lower() or "survival" in model_name.lower() or "rsf" in model_name.lower()
         
         # Core metrics
-        metrics = calculate_metrics(y_val, probs)
+        metrics = calculate_metrics(y_val, probs, time_col=time_c, event_col=event_c, is_survival=is_surv)
         
         # Bootstrap CIs
-        cis, df_boot = boot_eval.evaluate(y_val, probs)
+        cis, df_boot = boot_eval.evaluate(y_val, probs, time_col=time_c, event_col=event_c, is_survival=is_surv)
         df_boot.to_csv(exp_dir / f"bootstrap_dist_val_{model_name.replace(' ', '_').lower()}.csv", index=False)
         
         row = {"model": model_name}
@@ -223,6 +227,24 @@ def evaluate_experiment(exp_cfg: ExperimentConfig, runner: ExperimentRunner) -> 
             
         val_results.append(row)
         
+        # Recalibration & DCA
+        if not is_surv:
+            # 1. Decision Curve Analysis (DCA)
+            from src.evaluation.evaluator import run_dca
+            val_dca = run_dca(y_val, probs)
+            val_dca.to_csv(exp_dir / f"dca_val_{model_name.replace(' ', '_').lower()}.csv", index=False)
+            
+            if test_predictions and model_name in test_predictions:
+                test_probs = test_predictions[model_name]["prob"]
+                test_dca = run_dca(y_test, test_probs)
+                test_dca.to_csv(exp_dir / f"dca_test_{model_name.replace(' ', '_').lower()}.csv", index=False)
+                
+                # 2. Recalibration comparison (Platt vs Isotonic)
+                from src.calibration.recalibration import compare_recalibration
+                cal_comparison = compare_recalibration(y_val, probs, y_test, test_probs)
+                with open(exp_dir / f"calibration_recalibration_{model_name.replace(' ', '_').lower()}.json", "w") as fh:
+                    json.dump(cal_comparison, fh, indent=2)
+        
     df_val_results = pd.DataFrame(val_results)
     df_val_results.to_csv(exp_dir / "metrics_val.csv", index=False)
     
@@ -231,10 +253,16 @@ def evaluate_experiment(exp_cfg: ExperimentConfig, runner: ExperimentRunner) -> 
     if test_predictions:
         logger.info("Computing metrics and bootstrap CIs on Test split...")
         test_results = []
+        
+        time_c_test = test_df["months_observed"].values if (test_df is not None and "months_observed" in test_df.columns) else None
+        event_c_test = test_df["event_occurred"].values if (test_df is not None and "event_occurred" in test_df.columns) else None
+        
         for model_name, preds in test_predictions.items():
             probs = preds["prob"]
-            metrics = calculate_metrics(y_test, probs)
-            cis, df_boot = boot_eval.evaluate(y_test, probs)
+            is_surv = "cox" in model_name.lower() or "survival" in model_name.lower() or "rsf" in model_name.lower()
+            
+            metrics = calculate_metrics(y_test, probs, time_col=time_c_test, event_col=event_c_test, is_survival=is_surv)
+            cis, df_boot = boot_eval.evaluate(y_test, probs, time_col=time_c_test, event_col=event_c_test, is_survival=is_surv)
             df_boot.to_csv(exp_dir / f"bootstrap_dist_test_{model_name.replace(' ', '_').lower()}.csv", index=False)
             
             row = {"model": model_name}

@@ -141,12 +141,40 @@ def expected_calibration_error(y_true: np.ndarray, y_prob: np.ndarray, n_bins: i
 def calculate_metrics(y_true: pd.Series | np.ndarray, 
                       y_prob: pd.Series | np.ndarray, 
                       time_col: Optional[pd.Series | np.ndarray] = None, 
-                      event_col: Optional[pd.Series | np.ndarray] = None) -> dict[str, float]:
+                      event_col: Optional[pd.Series | np.ndarray] = None,
+                      is_survival: bool = False) -> dict[str, float]:
     """
     Compute primary, clinical, calibration, and risk metrics for a model.
     """
     y_true = np.asarray(y_true)
     y_prob = np.asarray(y_prob)
+    
+    if is_survival:
+        # For survival models, classification and standard calibration metrics are not applicable
+        if time_col is not None and event_col is not None:
+            c_val = harrell_c_index(time_col, event_col, y_prob)
+        else:
+            c_val = np.nan
+        return {
+            "roc_auc": np.nan,
+            "pr_auc": np.nan,
+            "accuracy": np.nan,
+            "precision": np.nan,
+            "recall": np.nan,
+            "f1": np.nan,
+            "mcc": np.nan,
+            "sensitivity": np.nan,
+            "specificity": np.nan,
+            "ppv": np.nan,
+            "npv": np.nan,
+            "brier_score": np.nan,
+            "calibration_intercept": np.nan,
+            "calibration_slope": np.nan,
+            "ece": np.nan,
+            "mce": np.nan,
+            "c_index": c_val
+        }
+        
     y_pred = (y_prob >= 0.5).astype(int)
     
     # Primary Metrics
@@ -189,7 +217,7 @@ def calculate_metrics(y_true: pd.Series | np.ndarray,
         c_index = harrell_c_index(time_col, event_col, y_prob)
     else:
         c_index = auc  # Binary equivalent
-
+ 
     return {
         "roc_auc": auc,
         "pr_auc": pr_auc,
@@ -209,6 +237,65 @@ def calculate_metrics(y_true: pd.Series | np.ndarray,
         "mce": mce,
         "c_index": c_index
     }
+ 
+ 
+def compute_net_benefit(y_true: np.ndarray, y_prob: np.ndarray, threshold: float) -> float:
+    """
+    Computes the Net Benefit at a given decision threshold.
+    """
+    y_true = np.asarray(y_true)
+    y_prob = np.asarray(y_prob)
+    n = len(y_true)
+    if n == 0:
+        return 0.0
+        
+    tp = np.sum((y_prob >= threshold) & (y_true == 1))
+    fp = np.sum((y_prob >= threshold) & (y_true == 0))
+    
+    if threshold <= 0 or threshold >= 1:
+        return float(tp) / n
+        
+    net_benefit = (tp - fp * (threshold / (1 - threshold))) / n
+    return float(net_benefit)
+ 
+ 
+def run_dca(y_true: np.ndarray, y_prob: np.ndarray, thresholds: np.ndarray | None = None) -> pd.DataFrame:
+    """
+    Performs Decision Curve Analysis, computing Net Benefit for the model,
+    a "Treat All" strategy, and a "Treat None" strategy across a grid of thresholds.
+    """
+    y_true = np.asarray(y_true)
+    y_prob = np.asarray(y_prob)
+    
+    if thresholds is None:
+        thresholds = np.linspace(0.01, 0.99, 99)
+        
+    n = len(y_true)
+    
+    model_nb = []
+    treat_all_nb = []
+    treat_none_nb = []
+    
+    for t in thresholds:
+        # Model
+        m_nb = compute_net_benefit(y_true, y_prob, t)
+        model_nb.append(m_nb)
+        
+        # Treat All
+        tp_all = np.sum(y_true == 1)
+        fp_all = np.sum(y_true == 0)
+        ta_nb = (tp_all - fp_all * (t / (1 - t))) / n
+        treat_all_nb.append(ta_nb)
+        
+        # Treat None
+        treat_none_nb.append(0.0)
+        
+    return pd.DataFrame({
+        "threshold": thresholds,
+        "net_benefit_model": model_nb,
+        "net_benefit_treat_all": treat_all_nb,
+        "net_benefit_treat_none": treat_none_nb
+    })
 
 
 # ---------------------------------------------------------------------------
@@ -225,7 +312,8 @@ class BootstrapEvaluator:
 
     def evaluate(self, y_true: np.ndarray, y_prob: np.ndarray, 
                  time_col: Optional[np.ndarray] = None, 
-                 event_col: Optional[np.ndarray] = None) -> tuple[dict[str, tuple[float, float]], pd.DataFrame]:
+                 event_col: Optional[np.ndarray] = None,
+                 is_survival: bool = False) -> tuple[dict[str, tuple[float, float]], pd.DataFrame]:
         y_true = np.asarray(y_true)
         y_prob = np.asarray(y_prob)
         if time_col is not None:
@@ -245,12 +333,12 @@ class BootstrapEvaluator:
             boot_time = time_col[indices] if time_col is not None else None
             boot_event = event_col[indices] if event_col is not None else None
             
-            # Avoid bootstrap failure if single class
-            if len(np.unique(boot_true)) < 2:
+            # Avoid bootstrap failure if single class (only check for non-survival)
+            if not is_survival and len(np.unique(boot_true)) < 2:
                 continue
                 
             try:
-                metrics = calculate_metrics(boot_true, boot_prob, boot_time, boot_event)
+                metrics = calculate_metrics(boot_true, boot_prob, boot_time, boot_event, is_survival=is_survival)
                 metrics_list.append(metrics)
             except Exception:
                 continue
