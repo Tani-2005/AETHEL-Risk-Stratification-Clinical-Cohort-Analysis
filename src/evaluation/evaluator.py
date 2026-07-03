@@ -348,9 +348,13 @@ class BootstrapEvaluator:
         # Calculate CIs (2.5th and 97.5th percentiles)
         ci_results = {}
         for col in df_boot.columns:
-            lower = np.percentile(df_boot[col].dropna(), 2.5)
-            upper = np.percentile(df_boot[col].dropna(), 97.5)
-            ci_results[col] = (lower, upper)
+            cleaned = df_boot[col].dropna()
+            if len(cleaned) == 0:
+                ci_results[col] = (np.nan, np.nan)
+            else:
+                lower = np.percentile(cleaned, 2.5)
+                upper = np.percentile(cleaned, 97.5)
+                ci_results[col] = (lower, upper)
             
         return ci_results, df_boot
 
