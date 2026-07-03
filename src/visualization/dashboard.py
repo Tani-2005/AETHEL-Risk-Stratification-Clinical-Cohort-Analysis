@@ -20,6 +20,7 @@ it falls back gracefully to representative placeholder values.
 from __future__ import annotations
 
 import pandas as pd
+# pyrefly: ignore [missing-import]
 import plotly.express as px
 import streamlit as st
 

@@ -170,6 +170,32 @@ class ConfigPaths:
 # Convenience: ensure all runtime directories exist
 # ---------------------------------------------------------------------------
 
+class ExplainabilityDirs:
+    """Explainability framework output directories — one sub-dir per experiment."""
+
+    BASE: Path = Dirs.OUTPUTS / "explainability"
+
+    # Sub-directories created dynamically per experiment: BASE / {exp_name} / {subdir}
+    SHAP: str = "shap"
+    PERMUTATION: str = "permutation"
+    PDP: str = "pdp"
+    ALE: str = "ale"
+    INTERACTIONS: str = "interactions"
+    LOCAL: str = "local"
+    STABILITY: str = "stability"
+    CONSENSUS: str = "consensus"
+    REPORTS: str = "reports"
+
+    @classmethod
+    def experiment_dir(cls, exp_name: str) -> Path:
+        return cls.BASE / exp_name
+
+    @classmethod
+    def subdir(cls, exp_name: str, model_name: str, subdir: str) -> Path:
+        safe_model = model_name.replace(" ", "_").lower()
+        return cls.BASE / exp_name / safe_model / subdir
+
+
 def ensure_output_dirs() -> None:
     """Create all output and data directories if they do not already exist."""
     for cls in (OutputDirs, ExperimentDirs):
@@ -180,3 +206,5 @@ def ensure_output_dirs() -> None:
     # Data versioning directories
     for d in (DataDirs.HARMONIZED, DataDirs.FEATURE_METADATA, DataDirs.MAPPING_TABLES):
         d.mkdir(parents=True, exist_ok=True)
+    # Explainability base
+    ExplainabilityDirs.BASE.mkdir(parents=True, exist_ok=True)
