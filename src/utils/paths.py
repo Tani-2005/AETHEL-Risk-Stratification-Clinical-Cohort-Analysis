@@ -196,6 +196,21 @@ class ExplainabilityDirs:
         return cls.BASE / exp_name / safe_model / subdir
 
 
+class RobustnessDirs:
+    """Robustness framework output directories."""
+
+    BASE: Path = Dirs.OUTPUTS / "robustness"
+
+    @classmethod
+    def experiment_dir(cls, exp_name: str) -> Path:
+        return cls.BASE / exp_name
+
+    @classmethod
+    def subdir(cls, exp_name: str, model_name: str) -> Path:
+        safe_model = model_name.replace(" ", "_").lower()
+        return cls.BASE / exp_name / safe_model
+
+
 def ensure_output_dirs() -> None:
     """Create all output and data directories if they do not already exist."""
     for cls in (OutputDirs, ExperimentDirs):
@@ -208,3 +223,6 @@ def ensure_output_dirs() -> None:
         d.mkdir(parents=True, exist_ok=True)
     # Explainability base
     ExplainabilityDirs.BASE.mkdir(parents=True, exist_ok=True)
+    # Robustness base
+    RobustnessDirs.BASE.mkdir(parents=True, exist_ok=True)
+
