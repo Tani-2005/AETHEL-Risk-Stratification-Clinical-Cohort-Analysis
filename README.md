@@ -94,12 +94,10 @@ AETHEL/
 │   ├── experiments/             # Experiment configuration snapshots (YAML)
 │   └── default.yaml             # Single source of truth for all run parameters
 ├── docs/                        # Scientific documentation and reports
-│   ├── bibliography/            # Bibliography catalogs (template.bib)
-│   ├── figures/                 # Vector figure specifications
-│   ├── manuscript/              # Outline drafts and appendix texts
-│   ├── papers/                  # Literature review organization directories
-│   ├── reading_tracker.md       # Literature reading log and review templates
-│   └── audit_report.md          # Pre-submission scientific & engineering audit
+│   ├── manuscript/              # Paper drafts, Figures, Tables, and Supplementary material
+│   ├── architecture.md          # System architecture, pipeline diagrams, and design decisions
+│   ├── publication.md           # Consolidated master document (Claims, Figures, Tables, Reviewer Notes, Targets, Checklist)
+│   └── reading_tracker.md       # Literature reading log, review templates, and citation targets
 ├── experiments/                 # Archived run histories (models, metrics, logs, figures)
 ├── research-workbench/          # React/Next.js dashboard source code (AETHEL Studio)
 ├── src/                         # Core Python modules

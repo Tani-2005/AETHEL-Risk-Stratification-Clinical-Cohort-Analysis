@@ -6,7 +6,7 @@ This document tracks literature read, analyzed, and cited for the AETHEL clinica
 
 ## Master Bibliography Index
 
-Refer to the companion [bibliography_template.bib](file:///c:/Antigravity%20Projects/AETHEL/docs/bibliography/bibliography_template.bib) for LaTeX/BibTeX references.
+Refer to the companion [bibliography_template.bib](file:///c:/Antigravity%20Projects/AETHEL/docs/manuscript/supplementary/bibliography_template.bib) for LaTeX/BibTeX references.
 
 | Citation | Category | Status | Core Contribution to AETHEL |
 | :--- | :--- | :--- | :--- |
@@ -19,7 +19,7 @@ Refer to the companion [bibliography_template.bib](file:///c:/Antigravity%20Proj
 
 ## Paper Review Template
 
-Use this template to document every paper reviewed for AETHEL. Save individual reviews inside the `docs/notes/` directory or append them below.
+Use this template to document every paper reviewed for AETHEL. Save individual reviews inside the `docs/manuscript/supplementary/notes/` directory or append them below.
 
 ### [Template: Title of the Paper]
 
