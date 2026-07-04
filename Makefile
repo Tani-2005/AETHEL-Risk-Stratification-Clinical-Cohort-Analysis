@@ -41,5 +41,5 @@ test:
 	pytest tests/
 
 clean:
-	python -c "import shutil; [shutil.rmtree(p, ignore_errors=True) for p in ['outputs', 'results', '.pytest_cache', '__pycache__']]"
+	python -c "import shutil; [shutil.rmtree(p, ignore_errors=True) for p in ['outputs', '.pytest_cache', '__pycache__']]"
 	python -c "import glob, os; [os.remove(f) for f in glob.glob('**/*.pyc', recursive=True)]"

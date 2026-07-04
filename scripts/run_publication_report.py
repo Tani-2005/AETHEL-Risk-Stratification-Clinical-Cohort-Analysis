@@ -48,7 +48,7 @@ def main() -> None:
     if args.output_dir:
         out_base = Path(args.output_dir)
     else:
-        out_base = PROJECT_ROOT / "results" / f"{args.experiment}_{timestamp}"
+        out_base = PROJECT_ROOT / "experiments" / f"{args.experiment}_reports_{timestamp}"
         
     logger.info("=" * 70)
     logger.info("AETHEL Scientific Visualization & Reporting Framework")

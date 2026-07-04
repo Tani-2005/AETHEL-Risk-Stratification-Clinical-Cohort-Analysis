@@ -7,6 +7,8 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pytest
 

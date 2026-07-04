@@ -76,8 +76,10 @@ def run_repeated_experiments(
             
             # Limit X_val size for SHAP speed
             val_explain_size = min(500, len(X_val))
-            # Determine indices deterministically using seed for consistency
-            X_val_sub = X_val[features].sample(n=val_explain_size, random_state=seed)
+            if len(X_val) <= val_explain_size:
+                X_val_sub = X_val[features]
+            else:
+                X_val_sub = X_val[features].sample(n=val_explain_size, random_state=42)
             
             # Defensive check for explainer
             model_name = model_class.__name__.lower()

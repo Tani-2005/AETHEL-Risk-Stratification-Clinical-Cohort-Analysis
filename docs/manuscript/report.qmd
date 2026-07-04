@@ -52,11 +52,11 @@ library(yaml)
 library(survival)
 library(randomForestSRC)
 
-config      <- yaml::read_yaml("../configs/default.yaml")
+config      <- yaml::read_yaml("../../configs/default.yaml")
 r_seed      <- config$seeds$r
 covariates  <- config$features$survival_covariates
 
-cohort_data <- read.csv("../data/processed/analytical_cohort.csv")
+cohort_data <- read.csv("../../data/processed/analytical_cohort.csv")
 cat(sprintf("Cohort loaded: %d patients\n", nrow(cohort_data)))
 ```
 

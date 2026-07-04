@@ -6,7 +6,7 @@ stability across repeated runs of machine learning models.
 """
 from __future__ import annotations
 import numpy as np
-from scipy.stats import spearmanr, pearsonr
+from scipy.stats import rankdata
 
 def compute_prediction_stability(predictions_list: list[np.ndarray] | np.ndarray) -> dict[str, float]:
     """
@@ -18,24 +18,20 @@ def compute_prediction_stability(predictions_list: list[np.ndarray] | np.ndarray
     if n_runs < 2:
         return {"jaccard_stability": 1.0, "prediction_agreement": 1.0}
 
-    jaccard_scores = []
-    agreement_scores = []
+    triu_indices = np.triu_indices(n_runs, k=1)
+    
+    # Raw agreement rate: mean of (preds[i] == preds[j])
+    agreement_matrix = np.mean(preds[:, None, :] == preds[None, :, :], axis=2)
+    agreement_scores = agreement_matrix[triu_indices]
 
-    for i in range(n_runs):
-        for j in range(i + 1, n_runs):
-            p1 = preds[i]
-            p2 = preds[j]
-            
-            # Raw agreement rate
-            agreement_scores.append(np.mean(p1 == p2))
-            
-            # Jaccard similarity of positive predictions
-            union_pos = np.sum((p1 == 1) | (p2 == 1))
-            if union_pos > 0:
-                jaccard = np.sum((p1 == 1) & (p2 == 1)) / union_pos
-                jaccard_scores.append(jaccard)
-            else:
-                jaccard_scores.append(1.0)
+    # Jaccard similarity: intersection / union of positive predictions
+    pos_preds = (preds == 1)  # bool array shape (n_runs, n_samples)
+    intersection = np.sum(pos_preds[:, None, :] & pos_preds[None, :, :], axis=2) # (n_runs, n_runs)
+    union = np.sum(pos_preds[:, None, :] | pos_preds[None, :, :], axis=2) # (n_runs, n_runs)
+    
+    # Avoid divide by zero
+    jaccard_matrix = np.where(union > 0, intersection / union, 1.0)
+    jaccard_scores = jaccard_matrix[triu_indices]
 
     return {
         "jaccard_stability": float(np.mean(jaccard_scores)),
@@ -52,23 +48,17 @@ def compute_probability_stability(probabilities_list: list[np.ndarray] | np.ndar
     if n_runs < 2:
         return {"probability_correlation": 1.0, "probability_mse": 0.0}
 
-    corrs = []
-    mses = []
+    triu_indices = np.triu_indices(n_runs, k=1)
 
-    for i in range(n_runs):
-        for j in range(i + 1, n_runs):
-            pr1 = probs[i]
-            pr2 = probs[j]
-            
-            # Pearson correlation
-            if np.std(pr1) > 0 and np.std(pr2) > 0:
-                r, _ = pearsonr(pr1, pr2)
-                corrs.append(r if not np.isnan(r) else 1.0)
-            else:
-                corrs.append(1.0)
-                
-            # MSE
-            mses.append(np.mean((pr1 - pr2) ** 2))
+    # Pearson correlation
+    corr_matrix = np.corrcoef(probs)  # Shape: (n_runs, n_runs)
+    corrs = corr_matrix[triu_indices]
+    corrs = np.nan_to_num(corrs, nan=1.0)
+
+    # MSE
+    diff = probs[:, None, :] - probs[None, :, :]
+    mse_matrix = np.mean(diff ** 2, axis=2)
+    mses = mse_matrix[triu_indices]
 
     return {
         "probability_correlation": float(np.mean(corrs)),
@@ -84,11 +74,15 @@ def compute_ranking_stability(importances_list: list[np.ndarray] | np.ndarray) -
     if n_runs < 2 or n_features < 2:
         return {"ranking_stability_rho": 1.0}
 
-    rhos = []
-    for i in range(n_runs):
-        for j in range(i + 1, n_runs):
-            rho, _ = spearmanr(imps[i], imps[j])
-            rhos.append(rho if not np.isnan(rho) else 1.0)
+    ranks = rankdata(imps, axis=1)
+    # Check for cases where all ranks are constant (e.g. constant importances)
+    if np.all(np.std(ranks, axis=1) == 0):
+        return {"ranking_stability_rho": 1.0}
+        
+    corr_matrix = np.corrcoef(ranks)
+    triu_indices = np.triu_indices(n_runs, k=1)
+    rhos = corr_matrix[triu_indices]
+    rhos = np.nan_to_num(rhos, nan=1.0)
 
     return {
         "ranking_stability_rho": float(np.mean(rhos)),
@@ -108,13 +102,19 @@ def compute_explanation_stability(shap_values_list: list[np.ndarray] | np.ndarra
     sample_rhos = []
     for s in range(n_samples):
         run_vectors = shaps[:, s, :]  # Shape: (n_runs, n_features)
-        rhos = []
-        for i in range(n_runs):
-            for j in range(i + 1, n_runs):
-                rho, _ = spearmanr(run_vectors[i], run_vectors[j])
-                rhos.append(rho if not np.isnan(rho) else 1.0)
+        ranks = rankdata(run_vectors, axis=1)  # Shape: (n_runs, n_features)
+        
+        if np.all(np.std(ranks, axis=1) == 0):
+            sample_rhos.append(1.0)
+            continue
+            
+        corr_matrix = np.corrcoef(ranks)  # Shape: (n_runs, n_runs)
+        triu_indices = np.triu_indices(n_runs, k=1)
+        rhos = corr_matrix[triu_indices]
+        rhos = np.nan_to_num(rhos, nan=1.0)
         sample_rhos.append(np.mean(rhos))
 
     return {
         "explanation_stability_rho": float(np.mean(sample_rhos)),
     }
+
