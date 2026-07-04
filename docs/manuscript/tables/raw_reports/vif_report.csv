@@ -1,0 +1,13 @@
+feature,VIF
+age,1.0106
+bmi,1.0119
+is_smoker,1.0099
+genomic_risk_score,1.7018
+townsend_index,1.4271
+avg_pm25_exposure,inf
+avg_no2_exposure,inf
+lat,1.0553
+lon,1.0468
+lifestyle_risk,1.4146
+high_genomic_risk,1.6894
+pollution_index,inf
