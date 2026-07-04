@@ -96,8 +96,11 @@ AETHEL/
 ├── docs/                        # Scientific documentation and reports
 │   ├── manuscript/              # Paper drafts, Figures, Tables, and Supplementary material
 │   ├── architecture.md          # System architecture, pipeline diagrams, and design decisions
-│   ├── publication.md           # Consolidated master document (Claims, Figures, Tables, Reviewer Notes, Targets, Checklist)
-│   └── reading_tracker.md       # Literature reading log, review templates, and citation targets
+│   └── publication.md           # Consolidated master document (Claims, Figures, Tables, Reviewer Notes, Targets, Checklist)
+├── literature/                  # Literature and research reference center
+│   ├── papers/                  # Empty categorized paper directories for PDFs (Explainable AI, Calibration, etc.)
+│   ├── reading_tracker.md       # Literature reading log, review templates, and citation targets
+│   └── bibliography.bib         # BibTeX master bibliography database
 ├── experiments/                 # Archived run histories (models, metrics, logs, figures)
 ├── research-workbench/          # React/Next.js dashboard source code (AETHEL Studio)
 ├── src/                         # Core Python modules
