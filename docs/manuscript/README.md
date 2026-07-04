@@ -1,8 +1,9 @@
 # Manuscript Directory
 
-This directory stores draft versions of the paper, including supplementary materials, clinical study logs, and LaTeX source directories.
+This directory stores the official publication-grade manuscript draft and its generated graphical and tabular assets.
 
-## Active Drafts
+## Structure
 
-*   `draft_v1_outline.md`: Initial paper outline.
-*   `supplementary_appendix.md`: Derivations of Feature Agreement Score (FAS) and bootstrap intervals.
+*   `report.qmd`: The master Quarto manuscript document (compiles the paper with inline R execution for statistics, generating PDF/HTML/Markdown outputs).
+*   `figures/`: Publication-grade figures (PNG and SVG vector graphics).
+*   `tables/`: Academic table outputs (available in LaTeX `.tex`, Markdown `.md`, CSV `.csv`, and Excel `.xlsx` formats).
