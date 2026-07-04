@@ -1,0 +1,8 @@
+| Source Cohort (Train)   | Target Cohort (Test)   | Source ROC-AUC   |   Target ROC-AUC |   Generalization Drop |   Transfer ECE |
+|:------------------------|:-----------------------|:-----------------|-----------------:|----------------------:|---------------:|
+| Synthetic               | Framingham             | 0.879 (XGBoost)  |            0.743 |                 0.136 |          0.085 |
+| Synthetic               | NHANES                 | 0.879 (XGBoost)  |            0.652 |                 0.227 |          0.142 |
+| Framingham              | Synthetic              | 0.854 (XGBoost)  |            0.721 |                 0.133 |          0.091 |
+| Framingham              | NHANES                 | 0.854 (XGBoost)  |            0.638 |                 0.216 |          0.138 |
+| NHANES (Surrogate)      | Synthetic              | 0.781 (XGBoost)  |            0.612 |                 0.169 |          0.125 |
+| NHANES (Surrogate)      | Framingham             | 0.781 (XGBoost)  |            0.641 |                 0.14  |          0.108 |

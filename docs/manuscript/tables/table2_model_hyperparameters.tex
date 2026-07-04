@@ -1,0 +1,13 @@
+\begin{tabular}{lcc}
+\toprule
+Model Name & Primary Hyperparameters & Optimization Strategy \\
+\midrule
+Logistic Regression & penalty='l2', C=1.0, solver='lbfgs', max_iter=1000 & Grid Search (L2 Penalty strength) \\
+Decision Tree & max_depth=5, min_samples_split=2, criterion='gini' & Cost-Complexity Pruning \\
+Random Forest & n_estimators=100, max_depth=None, bootstrap=True & Out-Of-Bag Error minimization \\
+XGBoost & n_estimators=100, max_depth=3, learning_rate=0.1, eval_metric='logloss' & Early Stopping (10 rounds validation check) \\
+LightGBM & n_estimators=100, max_depth=-1, learning_rate=0.1, verbose=-1 & Early Stopping (10 rounds validation check) \\
+Cox PH (R) & tie_handling='efron', formula=~age+bmi+smoker+sys_bp+dia_bp+cholesterol & Maximum Likelihood Estimation \\
+Random Survival Forest (R) & n_trees=100, split_rule='logrank', min_node_size=15 & Randomized Search on min_node_size & split_rule \\
+\bottomrule
+\end{tabular}

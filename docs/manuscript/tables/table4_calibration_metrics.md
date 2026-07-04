@@ -1,0 +1,9 @@
+| Model Name                 |   Expected Calibration Error (ECE) |   Maximum Calibration Error (MCE) |   Brier Score |   Calibration Slope |   Calibration Intercept |
+|:---------------------------|-----------------------------------:|----------------------------------:|--------------:|--------------------:|------------------------:|
+| Logistic Regression        |                              0.015 |                             0.032 |         0.142 |                1.01 |                   -0.01 |
+| Decision Tree              |                              0.048 |                             0.098 |         0.185 |                0.84 |                    0.08 |
+| Random Forest              |                              0.035 |                             0.076 |         0.151 |                0.92 |                    0.05 |
+| XGBoost                    |                              0.028 |                             0.054 |         0.128 |                0.97 |                    0.02 |
+| LightGBM                   |                              0.025 |                             0.051 |         0.13  |                0.96 |                    0.02 |
+| Cox PH (R)                 |                              0.019 |                             0.039 |         0.145 |                0.99 |                   -0.02 |
+| Random Survival Forest (R) |                              0.038 |                             0.082 |         0.154 |                0.89 |                    0.06 |

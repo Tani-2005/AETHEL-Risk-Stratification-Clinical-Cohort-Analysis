@@ -1,0 +1,11 @@
+| Metric / Characteristic              | Synthetic Cohort   | Framingham Cohort   | NHANES Cohort             |
+|:-------------------------------------|:-------------------|:--------------------|:--------------------------|
+| Sample Size (N)                      | 10,000             | 4,240               | 8,056                     |
+| Age (years, Mean ± SD)               | 52.4 ± 12.1        | 50.2 ± 8.6          | N/A (Unsupervised Schema) |
+| BMI (kg/m², Mean ± SD)               | 26.8 ± 4.5         | 25.8 ± 4.1          | N/A (Unsupervised Schema) |
+| Systolic BP (mmHg, Mean ± SD)        | 124.5 ± 14.2       | 132.9 ± 22.0        | 122.1 ± 16.5              |
+| Diastolic BP (mmHg, Mean ± SD)       | 78.2 ± 9.8         | 82.9 ± 12.0         | 70.5 ± 11.3               |
+| Total Cholesterol (mg/dL, Mean ± SD) | 198.5 ± 32.4       | 236.9 ± 44.0        | 196.2 ± 41.5              |
+| Current Smoker (N, %)                | 2,450 (24.5%)      | 1,902 (44.9%)       | N/A (Unsupervised Schema) |
+| Outcome Event (N, %)                 | 2,240 (22.4%)      | 1,637 (38.6%)       | 2,263 (28.1%, Surrogate)  |
+| Overall Missingness Rate (%)         | 0.0%               | 1.2%                | 8.5%                      |

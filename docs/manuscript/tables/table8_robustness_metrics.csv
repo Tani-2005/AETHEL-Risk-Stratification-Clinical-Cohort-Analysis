@@ -1,0 +1,6 @@
+Model Name,Robustness Index (0 - 100),Gaussian Noise Tolerance Limit (std),Missingness (MCAR) Failure Threshold,Epistemic Uncertainty (Mean Std)
+Logistic Regression,84.2,0.22,28.0%,0.012
+Decision Tree,65.1,0.11,15.0%,0.045
+Random Forest,88.6,0.35,35.0%,0.021
+XGBoost,92.4,0.42,40.0%,0.016
+LightGBM,91.2,0.40,38.0%,0.018

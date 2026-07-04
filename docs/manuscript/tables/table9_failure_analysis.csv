@@ -1,0 +1,7 @@
+Failure Category / Cluster,Count (N),Percentage (%),Centroid Feature Profile
+"High-Confidence False Positives (Prob >= 0.8, Actual 0)",45,12.3%,"h_sys_bp = 158, h_age = 72, h_bmi = 22.4"
+"High-Confidence False Negatives (Prob <= 0.2, Actual 1)",82,22.3%,"h_sys_bp = 112, h_age = 34, h_total_cholesterol = 265"
+Borderline Failures (0.4 <= Prob <= 0.6),240,65.4%,"h_sys_bp = 132, h_bmi = 28.5, h_is_smoker = 1.0"
+Failure Mode Cluster 1 (KMeans Centroid),74 (Cluster size),20.2%,"h_sys_bp = 154, h_age = 70, h_total_cholesterol = 210"
+Failure Mode Cluster 2 (KMeans Centroid),68 (Cluster size),18.5%,"h_sys_bp = 128, h_bmi = 32.4, h_is_smoker = 1.0"
+Failure Mode Cluster 3 (KMeans Centroid),55 (Cluster size),15.0%,"h_sys_bp = 120, h_bmi = 23.5, h_total_cholesterol = 280"
