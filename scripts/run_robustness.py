@@ -84,7 +84,7 @@ plt.rcParams.update({
 ALL_CLASSIFIERS = {
     "Logistic Regression": (LogisticRegression, {"max_iter": 1000, "random_state": 42}),
     "Decision Tree":       (DecisionTreeClassifier, {"max_depth": 5, "random_state": 42}),
-    "Random Forest":       (RandomForestClassifier, {"n_estimators": 100, "random_state": 42}),
+    "Random Forest":       (RandomForestClassifier, {"n_estimators": 100, "n_jobs": -1, "random_state": 42}),
     "XGBoost":             (XGBClassifier, {"eval_metric": "logloss", "random_state": 42}),
     "LightGBM":            (LGBMClassifier, {"verbose": -1, "random_state": 42}),
 }
@@ -426,6 +426,10 @@ def main() -> None:
         # Skip unsupported mode 3 (NHANES unsupervised)
         if exp_cfg.mode == 3:
             logger.info("Skipping Mode 3 (NHANES) - unsupervised cohort")
+            continue
+            
+        if exp_cfg.domain_shift_only:
+            logger.info("Skipping domain-shift-only experiment: %s", exp_cfg.name)
             continue
             
         run_experiment_robustness(cfg_path.stem, exp_cfg, runner, args.mode)

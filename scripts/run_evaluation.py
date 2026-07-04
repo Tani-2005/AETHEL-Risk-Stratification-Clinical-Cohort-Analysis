@@ -443,6 +443,9 @@ def main() -> None:
 
         try:
             exp_cfg = ExperimentConfig.from_yaml(yf)
+            if exp_cfg.domain_shift_only:
+                logger.info("Skipping domain-shift-only experiment: %s", yf.name)
+                continue
             evaluate_experiment(exp_cfg, runner)
         except Exception as e:
             logger.exception("Failed to run evaluation for %s: %s", yf.name, str(e))

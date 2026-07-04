@@ -87,7 +87,7 @@ def run_repeated_experiments(
                 explainer = shap.LinearExplainer(model, X_bg)
                 shap_vals = explainer.shap_values(X_val_sub)
             elif "forest" in model_name or "tree" in model_name or "xgb" in model_name or "lgb" in model_name:
-                explainer = shap.TreeExplainer(model, X_bg)
+                explainer = shap.TreeExplainer(model)
                 # Avoid additivity error on Windows
                 shap_vals = explainer.shap_values(X_val_sub, check_additivity=False)
             else:

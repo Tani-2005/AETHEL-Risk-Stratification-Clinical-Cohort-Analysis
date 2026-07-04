@@ -57,6 +57,19 @@ def main() -> None:
     logger.info("Output Dir : %s", out_base)
     logger.info("-" * 70)
     
+    # Load experiment config to check if it's domain_shift_only
+    from src.experiments.experiment_config import ExperimentConfig
+    exp_configs_dir = PROJECT_ROOT / "configs" / "experiments"
+    exp_file = exp_configs_dir / f"{args.experiment}.yaml"
+    if exp_file.exists():
+        try:
+            exp_cfg = ExperimentConfig.from_yaml(exp_file)
+            if exp_cfg.domain_shift_only:
+                logger.info("Skipping report generation for domain-shift-only experiment: %s", args.experiment)
+                sys.exit(0)
+        except Exception as e:
+            logger.warning("Failed to load experiment config: %s", e)
+
     try:
         results = run_reporting_pipeline(args.experiment, out_base)
         

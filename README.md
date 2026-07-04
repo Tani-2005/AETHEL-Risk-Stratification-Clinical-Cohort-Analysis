@@ -164,6 +164,9 @@ The Next.js user interface (AETHEL Studio) acts as a visual Research Workbench:
 1.  **Guided Research Tour:** A linear path through the clinical problem, scientific claims-evidence matrix, Interactive Pipeline, and Figure Gallery zoom models.
 2.  **Research Workspace:** An extended view displaying detailed cohort statistics, explanation consensus drift heatmaps, 2D robustness decay grids, and an execution console to trigger runs.
 
+![AETHEL Studio Dashboard](docs/manuscript/figures/dashboard_screenshot.png)
+
+
 ---
 
 ## 11. Installation

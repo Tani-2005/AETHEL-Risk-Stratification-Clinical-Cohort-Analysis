@@ -151,6 +151,17 @@ def run_pipeline(config_path: Path | None = None, skip_r: bool = False) -> None:
     skip_r:
         If True, R-dependent stages are skipped (useful when R is unavailable).
     """
+    if config_path:
+        try:
+            with open(config_path, "r", encoding="utf-8") as fh:
+                import yaml
+                raw = yaml.safe_load(fh) or {}
+            if raw.get("domain_shift_only", False):
+                logger.info("Skipping pipeline generation for domain-shift-only experiment: %s", config_path.name)
+                return
+        except Exception:
+            pass
+
     cfg = load_config(config_path)
 
     logger.info("=" * 60)
