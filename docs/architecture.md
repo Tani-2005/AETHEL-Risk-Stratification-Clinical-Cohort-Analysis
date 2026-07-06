@@ -1,30 +1,48 @@
 # AETHEL Architecture Reference
 
-## Data Flow
+AETHEL is structured as a decoupled, reproducible framework for auditing clinical machine learning models. 
+
+## Data & Process Flow
 
 ```
-data/raw/                               data/raw/
-eu_registry.csv  ──────────────────►  regional_environmental_history.csv
-(build_eu_registry.py)                 (generate_env_data.py)
-         │                                        │
-         │                                        │
-         └──────────────────────────────────────► │
-                                                   ▼
-                               data/raw/synthetic_clinical_cohort.csv
-                               (generate_clinical_cohort.R — R stage)
-                                                   │
-                                                   ▼
-                               data/processed/analytical_cohort.csv
-                               (preprocess_features.py)
-                                                   │
-                                                   ▼
-                               outputs/metrics/cox_coefficients.csv
-                               outputs/metrics/vimp.csv
-                               (survival_model.R — R stage)
-                                                   │
-                                                   ▼
-                               src/visualization/dashboard.py
-                               (Streamlit — reads analytical_cohort + vimp.csv)
+                                  [DATA SOURCE LAYER]
+                         ┌─────────────────────────────────┐
+                         │   Framingham Heart Study (FHS)  │
+                         │   NHANES Biochemical Survey     │
+                         │   AETHEL Synthetic Cohort       │
+                         └────────────────┬────────────────┘
+                                          │
+                                          ▼
+                             [HARMONIZATION & ALIGNMENT]
+                               (src/datasets/registry.py)
+                                          │
+                                          ▼
+                               [EXPERIMENT PIPELINES]
+                     ┌────────────────────┴────────────────────┐
+                     ▼                                         ▼
+           [INTERNAL VALIDATION]                     [CROSS-COHORT TRANSFER]
+       (scripts/run_evaluation.py)                (scripts/run_generalization.py)
+       - LeakageFreeCV (5x10-fold)                - Framingham ──► NHANES (Surrogate)
+       - Train/Val/Test splits                    - Synthetic ──► Framingham
+                     │                                         │
+                     └────────────────────┬────────────────────┘
+                                          │
+                                          ▼
+                              [AUDITING & METRICS LAYER]
+        ┌─────────────────────────────────┴─────────────────────────────────┐
+        │  1. CALIBRATION (src/calibration/): Platt Scaling, Isotonic       │
+        │  2. EXPLAINABILITY (src/explainability/): FAS, Jaccard TkO, SHAP  │
+        │  3. ROBUSTNESS (src/robustness/): Noise sweeps, Missingness       │
+        │  4. CLINICAL UTILITY (src/evaluation/): DCA, Bedside Waffles      │
+        └─────────────────────────────────┬─────────────────────────────────┘
+                                          │
+                                          ▼
+                             [REPORTING & USER INTERFACE]
+       ┌──────────────────────────────────┴──────────────────────────────────┐
+       │  - AETHEL Studio (research-workbench/): Next.js interactive UI      │
+       │  - Streamlit Dashboard (src/visualization/dashboard.py): Geospatial │
+       │  - LaTeX primary tables & high-res vector figures (outputs/)        │
+       └─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -32,134 +50,125 @@ eu_registry.csv  ──────────────────►  regi
 ## Module Responsibilities
 
 ### `src/utils/`
-
 The foundational infrastructure layer. Every other module depends on this — **never import from domain modules in utils**.
 
 | File | Responsibility |
 |---|---|
-| `constants.py` | All column names, feature lists, categorical labels |
-| `paths.py` | All file paths resolved via `pathlib.Path` from project root |
-| `config_loader.py` | Loads `configs/default.yaml` into typed `AETHELConfig` dataclass |
-| `logging_setup.py` | Configures console + file logger; `get_logger(__name__)` pattern |
-| `seed.py` | `set_global_seed(seed)` — sets numpy and random; R seed in config |
+| `constants.py` | Column names, feature lists, categories, and labels. |
+| `paths.py` | Resolves absolute file paths relative to project root. |
+| `config_loader.py` | Loads and typings `configs/default.yaml` parameters. |
+| `logging_setup.py` | Configures unified console and file logger. |
 
-### `src/preprocessing/`
+---
 
-Data generation and ingestion — **no modelling logic**.
+### `src/datasets/`
+Data loading, harmonization, and registration of the clinical cohorts.
+
+| File / Directory | Responsibility |
+|---|---|
+| `registry.py` | Dataset registry matching dataset strings to loaders. |
+| `base_loader.py` | Abstract base loader class enforcing common APIs. |
+| `synthetic_loader.py`| Loads and harmonizes AETHEL Synthetic Cohort. |
+| `framingham_loader.py`| Loads and harmonizes Framingham Heart Study data. |
+| `nhanes_loader.py` | Loads and harmonizes NHANES Biochemical Survey. |
+
+---
+
+### `src/evaluation/`
+Core statistical, clinical utility, and model evaluation engines.
 
 | File | Responsibility |
 |---|---|
-| `build_eu_registry.py` | Generates 100-city EU metadata registry (lat/lon, baseline pollution) |
-| `generate_env_data.py` | Generates 60-month monthly PM2.5/NO2 time-series per city |
-| `generate_clinical_cohort.R` | Generates synthetic clinical cohort (demographics, survival outcomes) |
+| `evaluator.py` | Computes traditional stats (AUC, Brier), bootstrapping CIs, McNemar tests, Decision Curve Analysis (DCA), and error categories. |
+| `cohort_comparison.py`| Compares statistics across different study sub-cohorts. |
 
-### `src/feature_engineering/`
+---
 
-Constructs analytical features from raw data — **no raw data generation**.
-
-| File | Responsibility |
-|---|---|
-| `preprocess_features.py` | Joins clinical + environmental data; computes patient-level exposures |
-
-### `src/models/`
-
-Statistical and ML model scripts — **reads only from `data/processed/`**.
+### `src/calibration/`
+Post-hoc recalibration modeling for recovering probability confidence.
 
 | File | Responsibility |
 |---|---|
-| `survival_model.R` | Cox PH + RSF survival models; saves coefficients + VIMP to `outputs/metrics/` |
+| `recalibration.py` | Platt Scaling (Sigmoid fit on logits) and Isotonic Regression models. |
 
-### `src/visualization/`
+---
 
-User-facing interface — **reads only from `data/processed/` and `outputs/`**.
+### `src/explainability/`
+Quantifying feature attributions and explainability consensus drift.
 
 | File | Responsibility |
 |---|---|
-| `dashboard.py` | Streamlit interactive dashboard with geospatial map and VIMP chart |
+| `shap_analysis.py` | Tree and Linear SHAP value explainers. |
+| `consensus_analysis.py`| Computes Feature Agreement Score (FAS) and Jaccard Top-k Overlap (TkO) rank correlations. |
+| `clinical_interpretation.py`| Generates clinical guidance maps from model attributions. |
+| `permutation_analysis.py`| Calculates model-agnostic permutation importances. |
 
-### `src/evaluation/` *(placeholder)*
+---
 
-Future: concordance index, Brier score, time-dependent AUC.
+### `src/robustness/`
+Stress-testing classifiers under missing data and environmental/sensor noise.
 
-### `src/explainability/` *(placeholder)*
+| File | Responsibility |
+|---|---|
+| `noise_analysis.py` | Sweeps Gaussian continuous noise and binary bit-flips. |
+| `missing_data_analysis.py`| Audits model degradation under simulated missingness (MCAR). |
+| `repeated_runs.py` | Runs repeated executions to compute variance/confidence bands. |
 
-Future: SHAP value computation, partial dependence plots, ICE curves.
+---
 
-### `src/calibration/` *(placeholder)*
+### `src/domain_shift/`
+Measuring multivariate covariate shifts.
 
-Future: Platt scaling, isotonic regression, reliability diagrams, ECE.
+| File | Responsibility |
+|---|---|
+| `shift_detector.py` | Calculates Wasserstein distance and Kullback-Leibler divergence. |
 
-### `src/robustness/` *(placeholder)*
+---
 
-Future: bootstrap CIs, sensitivity analysis, fairness subgroup analysis, trustworthiness evaluation.
+### `src/generalization/`
+Quantifying performance and attribution gaps across cohort transfer.
+
+| File | Responsibility |
+|---|---|
+| `generalization_gap.py`| Measures ROC-AUC drop and ECE increase. |
+| `explanation_drift.py`| Tracks SHAP rank and agreement drift under transfer. |
+
+---
+
+### `src/trustworthiness/`
+Consolidating multi-dimensional audits into clinical profiles.
+
+| File | Responsibility |
+|---|---|
+| `trustworthiness_evaluator.py`| Ranks metrics into a unified AETHEL clinical trust grade. |
+| `clinical_consistency.py`| Checks predictions against established physiological guidelines. |
+| `publication_tables.py`| Generates publication-ready Markdown/LaTeX tables. |
+
+---
+
+### `src/external_validation/`
+Orchestrating cross-cohort experiments and failure modes.
+
+| File | Responsibility |
+|---|---|
+| `validation_runner.py`| Aligns features and outcomes across transfer tasks. |
+| `failure_analysis.py` | Groups target failures into clinical clusters. |
+| `uncertainty_transfer.py`| Measures prediction confidence stability. |
 
 ---
 
 ## Configuration Architecture
 
-`configs/default.yaml` is the single source of truth.
+`configs/default.yaml` acts as the single source of truth for pipeline parameters.
+*   Python scripts access config parameters via `src.utils.config_loader.load_config()`.
+*   R scripts read the config parameters via `yaml::read_yaml("configs/default.yaml")`.
 
-Python scripts read it via `src/utils/config_loader.load_config()`.
-R scripts read it via `yaml::read_yaml("configs/default.yaml")`.
-
-**Rule**: Never hardcode a parameter that is in the config file.
-
-### Config Sections
-
-```yaml
-project:          # Metadata (name, version)
-pipeline_controls: # Toggle stages on/off
-seeds:            # Python (42) and R (123) seeds
-study_parameters: # n_subjects, observation_years, total_cities
-data_paths:       # Input file paths (relative to project root)
-output_paths:     # Output directory paths
-model_params:     # RSF ntree, importance flag
-features:         # survival_covariates list (single source of truth)
-default_dashboard_regions: # UI defaults
-```
+**Rule**: Parameters must never be hardcoded in any script if they exist in the YAML configuration.
 
 ---
 
 ## Reproducibility Contract
 
-| Layer | Mechanism |
-|---|---|
-| Python RNG | `src/utils/seed.set_global_seed(cfg.seeds.python)` at stage start |
-| R RNG | `set.seed(config$seeds$r)` at script start |
-| Per-city R seed | `np.random.seed(abs(hash(city_id)) % 10^8)` — deterministic, not global |
-| Config archiving | Archive `configs/default.yaml` alongside any publication |
-| Requirements | Pinned versions in `requirements.txt` and `environment.yml` |
-
----
-
-## Adding a New Dataset (e.g. NHANES)
-
-1. Add raw data to `data/nhanes/`
-2. Create `src/preprocessing/load_nhanes.py` following the `build_eu_registry.py` pattern
-3. Add NHANES paths to `src/utils/paths.py` under `DataPaths`
-4. Add a new pipeline control toggle in `configs/default.yaml`
-5. Wire the new stage into `scripts/run_pipeline.py`
-6. Add smoke tests in `tests/`
-
----
-
-## Adding a New Model
-
-1. Create `src/models/my_model.R` (or `.py`)
-2. Read covariates from `config$features$survival_covariates`
-3. Write outputs to `outputs/metrics/` and `outputs/models/`
-4. Add a toggle in `configs/default.yaml → pipeline_controls`
-5. Wire into `scripts/run_pipeline.py`
-
----
-
-## Naming Conventions
-
-| Item | Convention | Example |
-|---|---|---|
-| Python files | `snake_case.py` | `preprocess_features.py` |
-| R files | `snake_case.R` | `survival_model.R` |
-| Config keys | `snake_case` | `rsf_ntree` |
-| Column names | `snake_case` | `avg_pm25_exposure` |
-| Class names | `PascalCase` | `AETHELConfig` |
-| Constants | `UPPER_SNAKE` | `ANALYTICAL_COHORT` |
+*   **Global Seeds:** Set via `configs/default.yaml` and set globally at execution start for Python (`numpy`, `random`) and R.
+*   **Archiving:** Each execution of `scripts/run_pipeline.py` or the evaluation orchestrators outputs frozen config snapshots alongside reports.
+*   **Environments:** Dependency versions are pinned within `requirements.txt` and `environment.yml`.

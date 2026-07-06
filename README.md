@@ -1,4 +1,4 @@
-# AETHEL Studio
+# AETHEL: A Reproducible Auditing Framework for Clinical Machine Learning
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
@@ -7,7 +7,7 @@
 [![Preprint](https://img.shields.io/badge/Preprint-arXiv%3A2607.xxxxx-red.svg)]()
 [![DOI](https://img.shields.io/badge/DOI-10.1038%2Fs41746--026--xxxxx--x-blue.svg)]()
 
-**AETHEL is a reproducible auditing framework for validating the trustworthiness, calibration, and clinical utility of cardiovascular machine learning systems before deployment.**
+**AETHEL is a reproducible framework for auditing the trustworthiness, calibration, explainability, and clinical utility of clinical machine learning models before deployment.**
 
 ---
 
@@ -119,7 +119,7 @@ AETHEL/
 
 ## 7. Datasets
 
-AETHEL evaluates models across three distinct cohorts to validate generalization:
+AETHEL demonstrates its auditing capabilities by evaluating clinical models across three distinct cohorts to benchmark generalization under domain shift:
 
 1.  **Framingham Heart Study (Surrogate):** A classic longitudinal cohort used to validate risk models under stable, well-characterized demographic properties.
 2.  **NHANES (National Health and Nutrition Examination Survey):** Used as a target cohort representing national-level demographic distributions and diverse subpopulations.
