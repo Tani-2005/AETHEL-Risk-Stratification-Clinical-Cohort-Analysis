@@ -1,0 +1,4 @@
+Cohort,N,Event Rate (%),Split,Features,Geography
+Synthetic (Source),1000,23.4,Train (100%),"h_age, h_bmi, h_is_smoker, h_outcome_binary",Pan-European (Simulated)
+Framingham Heart Study (Target),4240,15.2,Validation (100%),"h_age, h_bmi, h_is_smoker + clinical","Framingham, MA, USA"
+NHANES (Domain Shift Ref.),"~15,000",N/A (cross-sectional),Unsupervised,"h_age, h_bmi, h_is_smoker + biochemical",USA (National Survey)

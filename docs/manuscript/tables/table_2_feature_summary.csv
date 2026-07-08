@@ -1,0 +1,4 @@
+Feature,Type,Synthetic Mean (SD),Framingham Mean (SD),KS Statistic,Drift
+h_age,Continuous,56.3 (12.4),49.9 (8.7),0.18,MODERATE
+h_bmi,Continuous,27.1 (4.6),25.8 (4.0),0.09,LOW
+h_is_smoker,Binary,0.44,0.51,0.07 (rate diff),LOW

@@ -1,0 +1,6 @@
+Model,Uncalibrated ECE,Platt Scaling ECE,Isotonic Regression ECE
+Logistic Regression,0.0496,0.0745,0.12
+Decision Tree,0.0919,0.0235,0.034
+Random Forest,0.1623,0.0035,0.0499
+Xgboost,0.2032,0.0543,0.0596
+Lightgbm,0.1721,0.0326,0.0819

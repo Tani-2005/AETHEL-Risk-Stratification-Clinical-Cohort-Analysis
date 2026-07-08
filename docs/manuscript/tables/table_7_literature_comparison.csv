@@ -1,0 +1,6 @@
+Reference,Domain,AETHEL Enhancement,Informatics Gap Filled
+Steyerberg et al. (2010),Cardiovascular Risk,Adds automated ECE auditing and DCA waffle charts,No executable calibration audit framework
+Lundberg & Lee (2017),Explainability (SHAP),Adds FAS/TkO drift metrics across cohort transfer,No cross-cohort XAI stability assessment
+Van Calster et al. (2019),Calibration methods,Integrates Platt/Isotonic scaling with ECE monitoring,No unified cross-cohort calibration software
+Collins et al. / TRIPOD+AI (2024),Reporting standards,Provides executable TRIPOD+AI-aligned pipeline,Guidelines exist but no software implementation
+Venn et al. (2008),Decision Curve Analysis,Translates DCA Net Benefit into waffle charts,DCA rarely communicated at bedside level

@@ -1,0 +1,10 @@
+Model,Parameter,Value
+Logistic Regression,max_iter,1000
+Logistic Regression,solver,lbfgs
+Decision Tree,max_depth,5
+Random Forest,n_estimators,100
+XGBoost,eval_metric,logloss
+LightGBM,verbose,-1
+All Models,random_state,42
+Bootstrap,n_bootstrap,1000
+CV,n_splits x n_repeats,10 x 5
