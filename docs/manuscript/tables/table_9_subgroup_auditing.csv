@@ -1,0 +1,9 @@
+Subgroup Variable,Subgroup Class,N,Event Rate (%),XGBoost AUC,Calibration ECE,FAS (Spearman ρ),Explanation Stable
+Age,Young (≤33rd pctile),1427,6.4,0.5524,0.0832,0.5,Partial
+Age,Middle (34–66th pctile),1496,14.9,0.549,0.125,0.5,Partial
+Age,Older (>66th pctile),1317,25.0,0.4966,0.1138,0.5,Partial
+Smoking,Non-Smoker (h_is_smoker=0),2145,14.5,0.5405,0.0349,0.5,Partial
+Smoking,Smoker (h_is_smoker=1),2095,15.9,0.6023,0.1378,1.0,Yes
+BMI,Low BMI (≤33rd pctile),1417,12.6,0.5956,0.0866,0.5,Partial
+BMI,Normal BMI (34–66th pctile),1411,14.1,0.5961,0.0935,1.0,Yes
+BMI,High BMI (>66th pctile),1412,18.8,0.5387,0.0961,1.0,Yes
